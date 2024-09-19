@@ -3,9 +3,11 @@
   "version": "1.0.0",
   "main": "server.ts",
   "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
-    "start": "node dist/server.js",
-    "dev": "nodemon src/server.ts"
+    "lint": "eslint \"src/**/*.{js,ts}\"",
+    "prepublish": "npm run build",
+    "start": "nodemon --exec ts-node src/server.ts"
   },
   "author": "",
   "license": "ISC",

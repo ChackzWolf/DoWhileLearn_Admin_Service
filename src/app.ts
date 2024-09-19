@@ -39,24 +39,24 @@ const logger = winston.createLogger({
 
 
 const packageDefinition = protoLoader.loadSync(
-    path.join(__dirname, "protos/tutor.proto"),
+    path.join(__dirname, "protos/admin.proto"),
     {keepCase:true , longs: String, enums: String , defaults: true, oneofs: true}
 )
 
-const tutorProto = grpc.loadPackageDefinition(packageDefinition) as any;
+const adminProto = grpc.loadPackageDefinition(packageDefinition) as any;
 
 const server = new grpc.Server()
 
-const grpcServer = () => {
+export const grpcServer = () => { 
     server.bindAsync(
-        `0.0.0.0:${process.env.TUTOR_GRPC_PORT}`,
+        `0.0.0.0:${process.env.ADMIN_GRPC_PORT}`,
         grpc.ServerCredentials.createInsecure(),
         (err,port)=>{
             if(err){
-                console.log(err, "Error happened grpc tutor service.");
+                console.log(err, "Error happened grpc admin service.");
                 return;
             }else{
-                console.log("gRPC tutor server started on port", port);
+                console.log("ADMIN_SERVICE running on port", port);
             }
         }
     )
@@ -65,11 +65,7 @@ const grpcServer = () => {
 
 export const controller = new AdminController() 
 
-server.addService(tutorProto.TutorService.service, {
-    VerifyOTP: controller.VerifyOtp,
-    ResendOTP: controller.ResendOtp,
+server.addService(adminProto.AdminService.service, {
     Login: controller.Login
 })
 
-grpcServer() 
-connectDB() 

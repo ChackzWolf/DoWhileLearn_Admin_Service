@@ -1,33 +1,12 @@
 import { AdminService } from "../useCase/Use.Case";
-
+import * as grpc from '@grpc/grpc-js';
 
 const adminService = new AdminService()
 
 
 export class AdminController {
  
-    async VerifyOtp(call: any, callback: any) {
-        try{
-            const data = call.request;
-            const response = await adminService.VerifyOtp(data);
-            console.log(response, 'response')
-            callback(null, response);
-        }catch(err){
-            console.error(err)
-        } 
-    } 
-
-    async ResendOtp(call:any, callback:any) { 
-        try{ 
-            const data = call.request;
-            const response = await adminService.ResendOTP(data);
-            callback(null,response);
-        }catch(err){
-            callback(err) 
-        } 
-    } 
-  
-    async Login(call:any, callback:any){
+    async Login(call: grpc.ServerUnaryCall<any, any>, callback: grpc.sendUnaryData<any>): Promise<void>{
         try{
             console.log('trigerererere')
             const data = call.request;
@@ -36,7 +15,7 @@ export class AdminController {
             console.log(response, 'response')
             callback(null, response);
         }catch(err){
-            callback(err)
+            callback(err as grpc.ServiceError)
         }
     }
 }
