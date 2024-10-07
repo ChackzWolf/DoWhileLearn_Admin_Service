@@ -1,3 +1,3 @@
-import {grpcServer} from './app'
+import {grpcServer} from './App'
 
 grpcServer() 

@@ -1,17 +1,7 @@
 import mongoose, { Document, Schema,Types } from "mongoose";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-
-
-export interface IAdmin extends Document {
-    firstName:string;
-    lastName:string;
-    email: string;
-    password: string;
-    comparePassword: (password: string) => Promise<boolean>;
-    SignAccessToken: () => string;
-    SignRefreshToken: () => string;
-}
+import { IAdmin } from "../Interfaces/Models/IAdmin";
 
 export interface ITempAdmin extends Document {
     adminData: IAdmin;

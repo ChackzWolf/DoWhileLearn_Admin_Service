@@ -1,6 +1,6 @@
 import dotenv from "dotenv";
 import jwt ,{ Secret }from "jsonwebtoken";
-import { IAdmin } from "../models/AdminModel";
+import { IAdmin } from "../Interfaces/Models/IAdmin";
 
 dotenv.config()
 

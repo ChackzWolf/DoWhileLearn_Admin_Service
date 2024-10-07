@@ -2,8 +2,8 @@ import dotenv from "dotenv";
 import * as grpc from "@grpc/grpc-js";
 import * as protoLoader from "@grpc/proto-loader";
 import path from "path";
-import { AdminController }  from "./controllers/Admin.Controller";
-import { connectDB } from "./configs/MongoDB";
+import { AdminController }  from "./Controllers/Admin.Controller";
+import { connectDB } from "./Configs/DB.configs.ts/MongoDB"
 import express from "express"
 import morgan from 'morgan';
 import winston from 'winston';
@@ -25,7 +25,7 @@ const logger = winston.createLogger({
       new DailyRotateFile({
         filename: 'logs/application-%DATE%.log',
         datePattern: 'YYYY-MM-DD',
-        maxFiles: '14d' // Keep logs for 14 days
+        maxFiles: '7d' // Keep logs for 14 days
       })
     ],
   });

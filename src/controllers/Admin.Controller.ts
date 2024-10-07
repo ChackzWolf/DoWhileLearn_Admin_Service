@@ -1,11 +1,9 @@
-import { AdminService } from "../useCase/Use.Case";
+import { AdminService } from "../Services/Admin.services";
 import * as grpc from '@grpc/grpc-js';
 
 const adminService = new AdminService()
 
-
 export class AdminController {
- 
     async Login(call: grpc.ServerUnaryCall<any, any>, callback: grpc.sendUnaryData<any>): Promise<void>{
         try{
             console.log('trigerererere')

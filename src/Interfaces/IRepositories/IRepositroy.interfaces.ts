@@ -1,5 +1,6 @@
 // IAdminRepository.ts
-import { IAdmin, ITempAdmin } from "../models/AdminModel";
+import { IAdmin } from "../Models/IAdmin";
+
 
 export interface IAdminRepository {
     findByEmail(email: string): Promise<IAdmin | null>;

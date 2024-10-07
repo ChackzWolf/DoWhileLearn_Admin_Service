@@ -1,33 +1,18 @@
-import adminRepository from "../repository/AdminRepository";
-import  {IAdmin, ITempAdmin, TempAdmin} from "../models/AdminModel";
+import adminRepository from "../Repository/AdminRepository";
 import dotenv from "dotenv"
-import { generateOTP } from "../utils/GenerateOTP";
-import { SendVerificationMail } from "../utils/SendEmail";
-import createToken from "../utils/Activation.token";
-import { IAdminService } from "../interfaces/IAdminService";
+import createToken from "../Utils/Activation.token";
+import { IAdminService } from "../Interfaces/IServices/IService.interfaces";
+import { AdminLoginDTO, AdminLoginResponseService } from "../Interfaces/DTOs/Admin.dtos";
 dotenv.config();
-
-interface Admin{
-    firstName:string;
-    lastName: string; 
-    email: string;
-    password: string;
-}
-
-interface VerifyOtpData{
-    enteredOTP:string;
-    email:string;
-    tempId:string
-}
 
 
 
 const repository = new adminRepository()
  
  
-export class AdminService{
+export class AdminService implements IAdminService{
     
-    async adminLogin(loginData: { email: string; password: string; }): Promise<{ success: boolean; message: string; adminData?: IAdmin ,accessToken?:string, refreshToken?:string }> {
+    async adminLogin(loginData: AdminLoginDTO): Promise<AdminLoginResponseService> {
         try {
             const {email, password} = loginData;
             const adminData = await repository.findByEmail(email);

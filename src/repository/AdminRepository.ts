@@ -1,6 +1,7 @@
 // adminRepository.ts
-import { IAdminRepository } from "../interfaces/IAdminRepositroy";
-import AdminModel, { IAdmin, ITempAdmin, TempAdmin } from "../models/AdminModel";
+import { IAdminRepository } from "../Interfaces/IRepositories/IRepositroy.interfaces";
+import AdminModel from "../Schemas/Admin.schema";
+import { IAdmin } from "../Interfaces/Models/IAdmin";
 import dotenv from "dotenv";
 
 dotenv.config();
