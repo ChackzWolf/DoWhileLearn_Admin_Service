@@ -2,6 +2,7 @@ import mongoose, { Document, Schema,Types } from "mongoose";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { IAdmin } from "../Interfaces/Models/IAdmin";
+import { configs } from "../Configs/ENV_configs/ENV.configs";
 
 export interface ITempAdmin extends Document {
     adminData: IAdmin;
@@ -62,9 +63,9 @@ AdminSchema.pre<IAdmin>("save", async function (next) {
 AdminSchema.methods.SignAccessToken = function () {
     return jwt.sign(
       { id: this._id, role: this.role },
-      process.env.ACCESS_TOKEN || "",
+      configs.JWT_SECRET || "",
       {
-        expiresIn: "5m",
+        expiresIn: configs.JWT_EXPIRATION_TIME,
       }
     );
   };
@@ -75,9 +76,9 @@ AdminSchema.methods.SignAccessToken = function () {
 AdminSchema.methods.SignRefreshToken = function () {
     return jwt.sign(
       { id: this._id, role: this.role },
-      process.env.REFRESH_TOKEN || "",
+      configs.REFRESH_TOKEN_SECRET,
       {
-        expiresIn: "3d",
+        expiresIn: configs.REFRESH_TOKEN_EXPIRATION_TIME,
       }
     );
 };
