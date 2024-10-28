@@ -1,0 +1,99 @@
+// adminRepository.ts
+import { IAdminRepository } from "../../Interfaces/IRepositories/IRepositroy.interfaces";
+import AdminModel, {Otp} from "../../Schemas/Admin.schema";
+import { IAdmin } from "../../Interfaces/Models/IAdmin";
+import dotenv from "dotenv";
+import { StatusCode } from "../../Interfaces/Enums/Enums";
+import { BaseRepository } from "../BaseRepository/Base.repository";
+
+
+class adminRepository extends BaseRepository<IAdmin> implements IAdminRepository {
+    constructor() {
+      super(AdminModel); // Pass the AdminModel to BaseRepository
+    }
+
+
+    async findByEmail(email: string): Promise<IAdmin | null> {
+        try {
+            const admin = await this.findOne({ email }) //.exec() method ensures that the query returns a promise.
+            console.log(admin, 'email in adminRepository');
+            return admin;
+        } catch (err) {
+            console.error(`Error finding admin by email: ${err}`);
+            return null;
+        }
+    }
+    async updateWallet(amount:number){
+      const admin:IAdmin | null = await this.findByEmail("admin@gmail.com")
+      if(admin){
+        admin.wallet = amount;
+        const updatedWallet = await admin?.save()
+        if(!updatedWallet){
+          throw Error
+        }
+        return {success:true};
+      }
+    }
+
+    async passwordChange(adminId:string,newPassword:string):Promise<{message:string,success:boolean,status:number}>{
+        try{
+          const admin: IAdmin | null = await this.findById(adminId);
+          console.log(admin,'admin data from repo')
+          if (!admin) {
+            return { message: 'Admin not found!', success: false, status: StatusCode.NotFound };
+          }
+          // Ensure password is hashed before saving (if necessary)
+          admin.password = newPassword
+          console.log(admin,'updated admin data from repo')
+          await admin.save(); // Save the updated admin with the new password
+          console.log('updated')
+          return { message: 'Password updated successfully!', success: true, status: StatusCode.OK }; 
+        } catch (error:unknown) {
+          console.log(error)
+          throw new Error("Admin not found");
+        }
+      }
+      async storeOTP(email: string, otp: string) {
+        try {
+            const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes
+            
+            // Use findOneAndUpdate to either update or create the OTP entry
+            const otpEntry = await Otp.findOneAndUpdate(
+                { email }, // Find the entry with the same email
+                { otp, expiresAt }, // Update the OTP and expiration time
+                { new: true, upsert: true } // Options: return the updated document and create if it doesn't exist
+            );
+    
+            console.log(otpEntry, 'otpentry');
+            return otpEntry._id;
+        } catch (error: unknown) {
+          throw new Error("User not found");
+        } 
+    }
+
+
+    async updateStoredOTP(otpId: string, otp: string) {
+      try {
+        const otpEntry = await Otp.findOneAndUpdate(
+          { _id:otpId }, // Find by otpId
+          { otp }, // Update the OTP and expiration time
+          { new: true, upsert: true } // Return updated doc, create if not exists
+        );
+        
+        if (!otpEntry) {
+          throw new Error('Failed to update or create OTP entry.');
+        }
+        
+        return otpEntry;
+      } catch (error) {
+        console.error('Error updating OTP entry:', error);
+        throw error; // Optionally rethrow the error for higher-level handling
+      }
+    }
+
+      async verifyOTP(email:string, otp:string) {
+        const otpEntry = await Otp.findOne({ email, otp, expiresAt: { $gt: new Date() } });
+        return otpEntry !== null;
+      }
+}
+export default adminRepository;

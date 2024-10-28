@@ -2,10 +2,71 @@ syntax = "proto3";
 
 service AdminService {
     rpc Login(LoginRequest) returns (LoginResponse);
+    rpc VerifyOTP(OTPRequest) returns (OTPResponse);
+    rpc ResendOTP(OTPRequest) returns (OTPResponse);
+    rpc SendOtpToEmail (SendOtpEmail) returns (SendOtpResponse);
+    rpc ResendOtpToEmail (ResendOtpEmail) returns (ResendOtpResponse);
+    rpc VerifyOTPResetPassword (VerifyOTPResetPasswordRequest) returns (OTPResponse);
+    rpc ResetPassword (ResetPasswordRequest) returns (ResetPasswordResponse);
+}
+
+
+message VerifyOTPResetPasswordRequest {
+    string email = 1;
+    string otpId = 2;
+    string enteredOTP = 3;
+} 
+message ResendOtpEmail {
+    string otpId = 1;
+    string email = 2;
+}
+message ResendOtpResponse {
+    bool success = 1;
+    int32 status = 2;
+    string message = 3;
+}
+
+message ResetPasswordRequest {
+    string adminId = 1;
+    string password = 2;
+}
+message ResetPasswordResponse{
+    bool success = 1;
+    int32 status = 2;
+    string message = 3;
+}
+
+
+message SendOtpEmail {
+    string email = 1;
+}
+
+message SendOtpResponse {
+    string message = 1;
+    bool success = 2;
+    int32 status = 3;
+    string email = 4;
+    string adminId = 5;
+    string otpId = 6;
 }
 
 
 
+message OTPRequest {
+    string email = 1;
+    string enteredOTP = 2;
+    string tempId = 3;
+}
+
+message OTPResponse {
+    bool success = 1;
+    AdminData adminData = 2;
+    string message = 3;
+    int32 status = 4;
+    string accessToken=5;
+    string refreshToken = 6;
+    string adminId = 7;
+}
 
 message LoginRequest {
     string email = 1;
@@ -19,7 +80,6 @@ message LoginResponse {
     int32 status = 4;
     string accessToken=5;
     string refreshToken = 6;
-    string _id = 7;
 }
 
 message AdminData{

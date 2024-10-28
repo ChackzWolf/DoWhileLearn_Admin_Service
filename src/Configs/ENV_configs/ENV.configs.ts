@@ -3,8 +3,11 @@ dotenv.config()
 
 
 export const configs = {
+    // LISTENER PORT
+    PORT : process.env.PORT || 3006,
+
     // GRPC PORT CONFIG
-    ADMIN_GRPC_PORT : process.env.ADMIN_GRPC_PORT || 5001,
+    ADMIN_GRPC_PORT : process.env.ADMIN_GRPC_PORT || 5006,
 
     // DWL EMAIL CONFIGS
     DWL_EMAIL : process.env.EMAIL || 'dowhilelearn05@gmail.com',

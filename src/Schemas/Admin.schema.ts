@@ -12,14 +12,6 @@ export interface ITempAdmin extends Document {
 }
 
 const AdminSchema: Schema <IAdmin> = new Schema({
-    firstName: {
-        type: String,
-        required: true
-    },
-    lastName: {
-        type: String,
-        required: true
-    },
     email: {
         type: String,
         required: true
@@ -27,6 +19,9 @@ const AdminSchema: Schema <IAdmin> = new Schema({
     password: {
         type: String,
         required: true
+    },
+    wallet: {
+        type:Number,
     }
 })
 
@@ -49,6 +44,12 @@ const TempAdminSchema: Schema <ITempAdmin> = new Schema({
 {
     timestamps: true,
 })
+
+const otpSchema = new Schema({
+    email: { type: String, required: true, unique: true },
+    otp: { type: String, required: true },
+    expiresAt: { type: Date, required: true }
+});
 
 // Hash password
 AdminSchema.pre<IAdmin>("save", async function (next) {
@@ -89,7 +90,7 @@ AdminSchema.methods.comparePassword = async function (enteredPassword: string) {
 };
 
 
-
+export const Otp = mongoose.model("setOTP",otpSchema)
 export const TempAdmin = mongoose.model<ITempAdmin>("TempAdminData",TempAdminSchema)
 const AdminModel = mongoose.model<IAdmin>("Admin", AdminSchema);
 

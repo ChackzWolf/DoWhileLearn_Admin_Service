@@ -48,7 +48,7 @@ const adminProto = grpc.loadPackageDefinition(packageDefinition) as any;
 
 const server = new grpc.Server()
 
-export const grpcServer = () => { 
+export const grpcServer = () => {  
     server.bindAsync(
         `0.0.0.0:${configs.ADMIN_GRPC_PORT}`,
         grpc.ServerCredentials.createInsecure(),
@@ -67,6 +67,19 @@ export const grpcServer = () => {
 export const controller = new AdminController() 
 
 server.addService(adminProto.AdminService.service, {
-    Login: controller.Login
+    Login: controller.Login,
+    SendOtpToEmail: controller.sendOtpToEmail ,
+    ResendOtpToEmail: controller.resendOtpToEmail,
+    VerifyOTPResetPassword : controller.VerifyEnteredOTP,
+    ResetPassword: controller.resetPassword,
 })
 
+// Start Kafka consumer
+controller.start()
+  .catch(error => console.error('Failed to start kafka course service:', error));
+
+const PORT = configs.PORT; 
+app.listen(PORT, () => {
+  console.log(`Course service running on port ${PORT}`);
+});
+ 
