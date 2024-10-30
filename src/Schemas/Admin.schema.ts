@@ -15,13 +15,14 @@ const AdminSchema: Schema <IAdmin> = new Schema({
     email: {
         type: String,
         required: true
-    },
+    }, 
     password: {
         type: String,
         required: true
     },
     wallet: {
         type:Number,
+        default: 0
     }
 })
 

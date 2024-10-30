@@ -26,8 +26,11 @@ class adminRepository extends BaseRepository<IAdmin> implements IAdminRepository
     async updateWallet(amount:number){
       const admin:IAdmin | null = await this.findByEmail("admin@gmail.com")
       if(admin){
-        admin.wallet = amount;
+        console.log('admin.wallet before')
+        admin.wallet =  admin.wallet + amount;
+        console.log('admin.wallet after')
         const updatedWallet = await admin?.save()
+        console.log(updatedWallet, 'updated wallet')
         if(!updatedWallet){
           throw Error
         }

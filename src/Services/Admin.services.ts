@@ -123,21 +123,38 @@ export class AdminService implements IAdminService{
 
     async handleOrderSuccess(paymentEvent:OrderEventData){
         try {
+            console.log(paymentEvent.adminShare, "this is admin share amount")
              const moneyToAdd = parseInt(paymentEvent.adminShare);
-             await repository.updateWallet(moneyToAdd);
-        } catch (error) {
-            const failureEvent: OrderEventData = {
+             const udpated = await repository.updateWallet(moneyToAdd);
+             if(!udpated?.success){
+                throw new Error(" not updated. error occuururur.")
+             }
+             await kafkaConfig.sendMessage('success.order.update', {
+                success: true,
+                service: 'ADMIN_SERVICE',
+                transactionId: paymentEvent.transactionId
+              });
+        } catch (error:any) {
+            await kafkaConfig.sendMessage('transaction-failed', {
                 ...paymentEvent,
+                service: 'ADMIN_SERVICE',
                 status: 'FAILED',
-                timestamp: new Date()
-              };
-            await kafkaConfig.sendMessage('order-transaction-failed', failureEvent);
+                error: error.message
+              });
         }
     }
 
-    async handleOrderTransactionFail(adminShare:string){
-        const moneyToSubstract = parseInt(adminShare);
-        await repository.updateWallet(moneyToSubstract* -1);
-        console.log('role back ', moneyToSubstract)
+    async handleOrderTransactionFail(failedPaymentEvent:OrderEventData){
+        console.log('rolebacked');
+        const moneyToSubstract = parseInt(failedPaymentEvent.adminShare);
+        const updated = await repository.updateWallet(moneyToSubstract* -1);
+        if(!updated?.success){
+            throw Error("role back failed. update is not success.")
+        }
+        console.log('role backed ', moneyToSubstract)
+        await kafkaConfig.sendMessage('rollback-completed', {
+            transactionId: failedPaymentEvent.transactionId,
+            service: 'ADMIN_SERVICE'
+        });
     }
 }  

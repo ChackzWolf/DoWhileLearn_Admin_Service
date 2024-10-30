@@ -18,38 +18,63 @@ export interface OrderEventData {
   }
 
 
-
+ 
 
 
 const adminService = new AdminService()
 
 export class AdminController {
     async start(): Promise<void> {
-        await kafkaConfig.consumeMessages(
-          'order-service-group',
-          ['payment.success','transaction-failed'],
-          this.handleMessage.bind(this)
+        const topics =          [
+            'order.process',
+            'order.rollback'
+          ];
+          await kafkaConfig.consumeMessages(
+          'admin-service-group',
+          topics,
+          this.routeMessage.bind(this)
         );
       }
 
+
+      async routeMessage(topics:string[], message:KafkaMessage, topic:string):Promise<void>{
+        try {
+          switch (topic) {
+            case 'order.process':
+                await this.handleMessage(message);
+                break;
+            case 'order.rollback':
+                await this.handleRollback(message);
+                break;
+            default:
+                console.warn(`Unhandled topic: ${topic}`);
+        }
+        } catch (error) {
+          
+        }
+      }
+
       // checking order  success or fail
-      private async handleMessage(message: KafkaMessage): Promise<void> {
+      async handleMessage(message: KafkaMessage): Promise<void> {
           try {
             const paymentEvent: OrderEventData = JSON.parse(message.value?.toString() || '');
             console.log('START', paymentEvent, 'MESAGe haaha')
-            if(paymentEvent.status !== 'SUCCESS'){
-              await adminService.handleOrderTransactionFail(paymentEvent.adminShare)
-              return
-            }
+
             await adminService.handleOrderSuccess(paymentEvent);
           } catch (error) {
             console.error('Error processing message:', error);
           }
         }
 
-
-
-
+        async handleRollback(message:KafkaMessage): Promise<void>{
+            try {
+              const paymentEvent: OrderEventData = JSON.parse(message.value?.toString() || '');
+              console.log('START Role back', paymentEvent, 'MESAGe haaha');
+              await adminService.handleOrderTransactionFail(paymentEvent)
+            } catch (error) {
+              
+            }
+          }
 
     async Login(call: grpc.ServerUnaryCall<any, any>, callback: grpc.sendUnaryData<any>): Promise<void>{
         try{
