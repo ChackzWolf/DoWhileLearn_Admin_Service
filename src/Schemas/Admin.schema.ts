@@ -21,7 +21,7 @@ const AdminSchema: Schema <IAdmin> = new Schema({
         required: true
     },
     wallet: {
-        type:Number,
+        type:Number, 
         default: 0
     }
 })
@@ -57,7 +57,7 @@ AdminSchema.pre<IAdmin>("save", async function (next) {
     if (!this.isModified("password")) {
       next();
     }
-    this.password = await bcrypt.hash(this.password || "", 10);
+    this.password = await bcrypt.hash(this.password || "", 10); 
     next();
 });
 

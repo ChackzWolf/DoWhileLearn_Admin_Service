@@ -129,15 +129,16 @@ export class AdminService implements IAdminService{
              if(!udpated?.success){
                 throw new Error(" not updated. error occuururur.")
              }
-             await kafkaConfig.sendMessage('success.order.update', {
+             await kafkaConfig.sendMessage('admin.response', {
                 success: true,
-                service: 'ADMIN_SERVICE',
+                service: 'admin-service',
+                status:'COMPLETED',
                 transactionId: paymentEvent.transactionId
               });
         } catch (error:any) {
-            await kafkaConfig.sendMessage('transaction-failed', {
+            await kafkaConfig.sendMessage('admin.response', {
                 ...paymentEvent,
-                service: 'ADMIN_SERVICE',
+                service: 'admin-service',
                 status: 'FAILED',
                 error: error.message
               });
@@ -145,16 +146,15 @@ export class AdminService implements IAdminService{
     }
 
     async handleOrderTransactionFail(failedPaymentEvent:OrderEventData){
-        console.log('rolebacked');
-        const moneyToSubstract = parseInt(failedPaymentEvent.adminShare);
-        const updated = await repository.updateWallet(moneyToSubstract* -1);
+        const moneyToSubtract = parseInt(failedPaymentEvent.adminShare) * -1;
+        const updated = await repository.updateWallet(moneyToSubtract);
         if(!updated?.success){
             throw Error("role back failed. update is not success.")
         }
-        console.log('role backed ', moneyToSubstract)
+        console.log('rollbacked ', moneyToSubtract)
         await kafkaConfig.sendMessage('rollback-completed', {
             transactionId: failedPaymentEvent.transactionId,
-            service: 'ADMIN_SERVICE'
+            service: 'admin-service'
         });
     }
 }  

@@ -26,24 +26,24 @@ const adminService = new AdminService()
 export class AdminController {
     async start(): Promise<void> {
         const topics =          [
-            'order.process',
-            'order.rollback'
+            'admin.update',
+            'admin-service.rollback'
           ];
           await kafkaConfig.consumeMessages(
           'admin-service-group',
           topics,
           this.routeMessage.bind(this)
         );
-      }
+    }
 
 
       async routeMessage(topics:string[], message:KafkaMessage, topic:string):Promise<void>{
         try {
           switch (topic) {
-            case 'order.process':
+            case 'admin.update':
                 await this.handleMessage(message);
                 break;
-            case 'order.rollback':
+            case 'admin-service.rollback':
                 await this.handleRollback(message);
                 break;
             default:
@@ -68,13 +68,13 @@ export class AdminController {
 
         async handleRollback(message:KafkaMessage): Promise<void>{
             try {
-              const paymentEvent: OrderEventData = JSON.parse(message.value?.toString() || '');
+              const paymentEvent = JSON.parse(message.value?.toString() || '');
               console.log('START Role back', paymentEvent, 'MESAGe haaha');
-              await adminService.handleOrderTransactionFail(paymentEvent)
+              await adminService.handleOrderTransactionFail(paymentEvent.data)
             } catch (error) {
               
-            }
-          }
+            } 
+          } 
 
     async Login(call: grpc.ServerUnaryCall<any, any>, callback: grpc.sendUnaryData<any>): Promise<void>{
         try{

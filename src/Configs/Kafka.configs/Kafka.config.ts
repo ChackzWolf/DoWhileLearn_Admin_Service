@@ -7,9 +7,9 @@ export class KafkaConfig {
   private consumer: Consumer | null = null;
   private static instance: KafkaConfig;
 
-  private constructor() {
+  private constructor() { 
     this.kafka = new Kafka({
-      clientId: 'elearning-service',
+      clientId: 'nodejs-kafka',
       brokers: ['localhost:9092'],
       retry: {
         maxRetryTime: 60000, // 60 seconds
