@@ -65,14 +65,14 @@ export class AdminController {
             console.error('Error processing message:', error);
           }
         }
-
+ 
         async handleRollback(message:KafkaMessage): Promise<void>{
             try {
               const paymentEvent = JSON.parse(message.value?.toString() || '');
               console.log('START Role back', paymentEvent, 'MESAGe haaha');
-              await adminService.handleOrderTransactionFail(paymentEvent.data)
+              await adminService.handleOrderTransactionFail(paymentEvent.data) 
             } catch (error) {
-              
+              console.error('Error processing message:', error)
             } 
           } 
 

@@ -26,7 +26,7 @@ dotenv.config();
   }
 
 const repository = new adminRepository()
- 
+  
  
 export class AdminService implements IAdminService{
     
@@ -43,14 +43,14 @@ export class AdminService implements IAdminService{
                 }else {
                     return { success: false, message: "Invalid password."}
                 } 
-            }else{
+            }else{ 
                 return {success: false , message: "Invalid email."}
-            } 
+            }  
             
         } catch (error) {
             return { success:false, message: "An error occured while loggin in."};
         }
-    }
+    }  
 
     async resetPassword(data: {adminId:string, password:string}){
         try {

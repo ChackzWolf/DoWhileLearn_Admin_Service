@@ -39,7 +39,7 @@ export class KafkaConfig {
     if (!this.consumer) {
       this.consumer = this.kafka.consumer({ groupId });
       await this.consumer.connect();
-    }
+    } 
     return this.consumer;
   }
 
