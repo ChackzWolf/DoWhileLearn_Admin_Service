@@ -16,6 +16,7 @@ COPY src ./src
 COPY src/protos ./src/protos
 
 # Run the TypeScript compilation
+RUN npm install --ignore-scripts
 RUN npm run build
 
 # Stage 2: Create the production image

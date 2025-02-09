@@ -10,7 +10,7 @@ const ENV_configs_1 = require("../ENV_configs/ENV.configs");
 const connectDB = async () => {
     try {
         if (!ENV_configs_1.configs.MONGODB_URL_ADMIN) {
-            throw new Error("MONGO_URI is not defined in the environment variables");
+            throw new Error("MONGODB_URL_ADMIN is not defined in the environment variables");
         }
         await mongoose_1.default.connect(ENV_configs_1.configs.MONGODB_URL_ADMIN);
         console.log("Admin DB connected");

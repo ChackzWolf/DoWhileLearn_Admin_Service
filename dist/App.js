@@ -26,7 +26,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.controller = exports.grpcServer = void 0;
+exports.grpcServer = void 0;
 const dotenv_1 = __importDefault(require("dotenv"));
 const grpc = __importStar(require("@grpc/grpc-js"));
 const protoLoader = __importStar(require("@grpc/proto-loader"));
@@ -38,6 +38,8 @@ const morgan_1 = __importDefault(require("morgan"));
 const winston_1 = __importDefault(require("winston"));
 const winston_daily_rotate_file_1 = __importDefault(require("winston-daily-rotate-file"));
 const ENV_configs_1 = require("./Configs/ENV_configs/ENV.configs");
+const Admin_services_1 = require("./Services/Admin.services");
+const Admin_repository_1 = __importDefault(require("./Repository/AdminRepository/Admin.repository"));
 const app = (0, express_1.default)();
 (0, MongoDB_1.connectDB)();
 dotenv_1.default.config();
@@ -75,16 +77,19 @@ const grpcServer = () => {
     });
 };
 exports.grpcServer = grpcServer;
-exports.controller = new Admin_Controller_1.AdminController();
+const adminRepository = new Admin_repository_1.default();
+const adminService = new Admin_services_1.AdminService(adminRepository);
+const adminController = new Admin_Controller_1.AdminController(adminService);
 server.addService(adminProto.AdminService.service, {
-    Login: exports.controller.Login,
-    SendOtpToEmail: exports.controller.sendOtpToEmail,
-    ResendOtpToEmail: exports.controller.resendOtpToEmail,
-    VerifyOTPResetPassword: exports.controller.VerifyEnteredOTP,
-    ResetPassword: exports.controller.resetPassword,
+    Login: adminController.Login.bind(adminController),
+    SendOtpToEmail: adminController.sendOtpToEmail.bind(adminController),
+    ResendOtpToEmail: adminController.resendOtpToEmail.bind(adminController),
+    VerifyOTPResetPassword: adminController.VerifyEnteredOTP.bind(adminController),
+    ResetPassword: adminController.resetPassword.bind(adminController),
+    Test: adminController.test.bind(adminController)
 });
 // Start Kafka consumer
-exports.controller.start()
+adminController.start()
     .catch(error => console.error('Failed to start kafka course service:', error));
 const PORT = ENV_configs_1.configs.PORT;
 app.listen(PORT, () => {

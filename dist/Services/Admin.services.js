@@ -14,10 +14,13 @@ const Kafka_config_1 = require("../Configs/Kafka.configs/Kafka.config");
 dotenv_1.default.config();
 const repository = new Admin_repository_1.default();
 class AdminService {
+    constructor(adminRepository) {
+        this.adminRepository = adminRepository;
+    }
     async adminLogin(loginData) {
         try {
             const { email, password } = loginData;
-            const adminData = await repository.findByEmail(email);
+            const adminData = await this.adminRepository.findByEmail(email);
             if (adminData) {
                 const checkPassword = await adminData.comparePassword(password);
                 if (checkPassword) {
@@ -41,7 +44,7 @@ class AdminService {
         try {
             console.log(data, 'data from respon');
             const { adminId, password } = data;
-            const response = await repository.passwordChange(adminId, password);
+            const response = await this.adminRepository.passwordChange(adminId, password);
             console.log(response, 'repon from service');
             return response;
         }
@@ -52,7 +55,7 @@ class AdminService {
     async sendEmailOtp(data) {
         try {
             const email = data.email;
-            const emailExists = await repository.findByEmail(email);
+            const emailExists = await this.adminRepository.findByEmail(email);
             if (!emailExists) {
                 console.log("email not found triggered");
                 return { success: false, message: "Email not found", status: Enums_1.StatusCode.NotFound };
@@ -61,7 +64,7 @@ class AdminService {
             console.log(`OTP : [ ${otp} ]`);
             await (0, SendEmail_1.SendVerificationMail)(email, otp);
             console.log('1');
-            const otpId = await repository.storeOTP(email, otp);
+            const otpId = await this.adminRepository.storeOTP(email, otp);
             console.log('2');
             return { message: 'An OTP has send to your email address.', success: true, status: Enums_1.StatusCode.Found, email, otpId, adminId: emailExists._id };
         }
@@ -76,7 +79,7 @@ class AdminService {
             let otp = (0, GenerateOTP_1.generateOTP)();
             console.log(`OTP : [ ${otp} ]`);
             await (0, SendEmail_1.SendVerificationMail)(email, otp);
-            const updateStoredOTP = await repository.updateStoredOTP(otpId, otp);
+            const updateStoredOTP = await this.adminRepository.updateStoredOTP(otpId, otp);
             if (!updateStoredOTP) {
                 return { success: false, status: Enums_1.StatusCode.NotFound, message: "Time expired. try again later." };
             }
@@ -91,8 +94,8 @@ class AdminService {
     async resetPasswordVerifyOTP(data) {
         try {
             const { email, enteredOTP } = data;
-            const response = await repository.verifyOTP(email, enteredOTP);
-            const admin = await repository.findByEmail(email);
+            const response = await this.adminRepository.verifyOTP(email, enteredOTP);
+            const admin = await this.adminRepository.findByEmail(email);
             if (response && admin) {
                 return { success: true, message: 'Email has been verified successfuly.', status: Enums_1.StatusCode.Accepted, email, adminId: admin._id };
             }
@@ -106,7 +109,7 @@ class AdminService {
         try {
             console.log(paymentEvent.adminShare, "this is admin share amount");
             const moneyToAdd = parseInt(paymentEvent.adminShare);
-            const udpated = await repository.updateWallet(moneyToAdd);
+            const udpated = await this.adminRepository.updateWallet(moneyToAdd);
             if (!udpated?.success) {
                 throw new Error(" not updated. error occuururur.");
             }
@@ -128,7 +131,7 @@ class AdminService {
     }
     async handleOrderTransactionFail(failedPaymentEvent) {
         const moneyToSubtract = parseInt(failedPaymentEvent.adminShare) * -1;
-        const updated = await repository.updateWallet(moneyToSubtract);
+        const updated = await this.adminRepository.updateWallet(moneyToSubtract);
         if (!updated?.success) {
             throw Error("role back failed. update is not success.");
         }
