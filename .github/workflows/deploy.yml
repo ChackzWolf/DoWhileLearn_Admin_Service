@@ -27,10 +27,7 @@ jobs:
           context: .
           push: true
           tags: jacksoncheriyan05/admin-service:${{ steps.vars.outputs.sha_short }}
-      
-      - name: Debug container files
-        run: docker run --rm jacksoncheriyan05/admin-service:${{ steps.vars.outputs.sha_short }} ls -la /app
-  
+
       - name: Install doctl
         uses: digitalocean/action-doctl@v2
         with:
