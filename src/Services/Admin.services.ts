@@ -1,11 +1,11 @@
 import adminRepository from "../Repository/AdminRepository/Admin.repository";
 import dotenv from "dotenv"
-import createToken from "../Utils/Activation.token";
+import createToken from "../utils/activation.token";
 import { IAdminService } from "../Interfaces/IServices/IService.interfaces";
 import { AdminLoginDTO, AdminLoginResponseService } from "../Interfaces/DTOs/Admin.dtos";
 import { StatusCode } from "../Interfaces/Enums/Enums";
-import { generateOTP } from "../Utils/GenerateOTP";
-import { SendVerificationMail } from "../Utils/SendEmail";
+import { generateOTP } from "../utils/generateOTP";
+import { SendVerificationMail } from "../utils/sendEmail";
 import { kafkaConfig } from "../Configs/Kafka.configs/Kafka.config";
 import { IAdminRepository } from "../Interfaces/IRepositories/IRepositroy.interfaces";
 

@@ -14,7 +14,7 @@ service AdminService {
 message emptyRequest{}
 
 message TestResponse {
-    boolean success = 1;
+    bool success = 1;
 }
 
 

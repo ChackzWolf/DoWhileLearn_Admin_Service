@@ -1,4 +1,4 @@
-import { AdminService } from "../Services/Admin.services";
+import { AdminService } from "../services/Admin.services";
 import * as grpc from '@grpc/grpc-js';
 import { kafkaConfig } from "../Configs/Kafka.configs/Kafka.config";
 import { KafkaMessage } from 'kafkajs';
@@ -137,7 +137,7 @@ export class AdminController {
             callback(null,response);
         } catch (error) {
             callback(error as grpc.ServiceError);
-        }
+        } 
     }
 
     test(_call: grpc.ServerUnaryCall<null,{success:boolean}>, callback:grpc.sendUnaryData<{success:boolean}>): void {
