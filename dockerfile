@@ -16,8 +16,9 @@ COPY . .
 COPY src/protos ./src/protos
 
 # Run the TypeScript compilation
-RUN npm install --only=production
+RUN npm install
 RUN npm run build
+RUN npm prune --omit=dev
 
 # Stage 2: Create the production image
 FROM node:18-alpine
