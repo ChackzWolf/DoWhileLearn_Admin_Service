@@ -1,4 +1,4 @@
-import { AdminService } from "../TempServices/Admin.services";
+import { AdminService } from "../Services/Admin.services";
 import * as grpc from '@grpc/grpc-js';
 import { kafkaConfig } from "../Configs/Kafka.configs/Kafka.config";
 import { KafkaMessage } from 'kafkajs';

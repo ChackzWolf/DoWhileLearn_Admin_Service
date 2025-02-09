@@ -1,6 +1,6 @@
 // adminRepository.ts
 import { IAdminRepository } from "../../Interfaces/IRepositories/IRepositroy.interfaces";
-import AdminModel, {Otp, OTPInterface} from "../../tempSchemas/Admin.schema";
+import AdminModel, {Otp, OTPInterface} from "../../Schemas/Admin.schema";
 import { IAdmin } from "../../Interfaces/Models/IAdmin";
 import dotenv from "dotenv";
 import { StatusCode } from "../../Interfaces/Enums/Enums";

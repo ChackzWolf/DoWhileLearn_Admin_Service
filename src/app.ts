@@ -2,14 +2,14 @@ import dotenv from "dotenv";
 import * as grpc from "@grpc/grpc-js";
 import * as protoLoader from "@grpc/proto-loader";
 import path from "path";
-import { AdminController }  from "./TempControllers/Admin.Controller";
+import { AdminController }  from "./Controllers/Admin.Controller";
 import { connectDB } from "./Configs/DB.configs.ts/MongoDB"
 import express from "express"
 import morgan from 'morgan';
 import winston from 'winston';
 import DailyRotateFile from 'winston-daily-rotate-file';
 import { configs } from "./Configs/ENV_configs/ENV.configs";
-import { AdminService } from "./TempServices/Admin.services";
+import { AdminService } from "./Services/Admin.services";
 import AdminRepository from "./Repository/AdminRepository/Admin.repository";
 const app = express()
 
