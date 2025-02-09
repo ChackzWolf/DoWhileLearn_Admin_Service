@@ -12,7 +12,7 @@ COPY tsconfig.json ./
 RUN npm install --ignore-scripts
 
 # Copy source code and Proto files
-COPY src ./src
+COPY . .
 COPY src/protos ./src/protos
 
 # Run the TypeScript compilation
