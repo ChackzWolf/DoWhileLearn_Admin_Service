@@ -1,10 +1,12 @@
 // adminRepository.ts
 import { IAdminRepository } from "../../Interfaces/IRepositories/IRepositroy.interfaces";
-import AdminModel, {Otp} from "../../Schemas/Admin.schema";
+import AdminModel, {Otp, OTPInterface} from "../../Schemas/Admin.schema";
 import { IAdmin } from "../../Interfaces/Models/IAdmin";
 import dotenv from "dotenv";
 import { StatusCode } from "../../Interfaces/Enums/Enums";
 import { BaseRepository } from "../BaseRepository/Base.repository";
+import { promises } from "node:readline";
+import { ObjectId } from "mongodb";
 
 
 class adminRepository extends BaseRepository<IAdmin> implements IAdminRepository {
@@ -23,7 +25,7 @@ class adminRepository extends BaseRepository<IAdmin> implements IAdminRepository
             return null;
         }
     }
-    async updateWallet(amount:number){
+    async updateWallet(amount:number):Promise<{success:boolean} | undefined>{
       const admin:IAdmin | null = await this.findByEmail("admin@gmail.com")
       if(admin){
         console.log('admin.wallet before')
@@ -56,7 +58,7 @@ class adminRepository extends BaseRepository<IAdmin> implements IAdminRepository
           throw new Error("Admin not found");
         }
       }
-      async storeOTP(email: string, otp: string) {
+      async storeOTP(email: string, otp: string):Promise<ObjectId>{ 
         try {
             const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes
             
@@ -68,14 +70,14 @@ class adminRepository extends BaseRepository<IAdmin> implements IAdminRepository
             );
     
             console.log(otpEntry, 'otpentry');
-            return otpEntry._id;
+            return otpEntry._id as ObjectId;
         } catch (error: unknown) {
           throw new Error("User not found");
         } 
     }
 
 
-    async updateStoredOTP(otpId: string, otp: string) {
+    async updateStoredOTP(otpId: string, otp: string):Promise<OTPInterface | null>{
       try {
         const otpEntry = await Otp.findOneAndUpdate(
           { _id:otpId }, // Find by otpId
@@ -94,7 +96,7 @@ class adminRepository extends BaseRepository<IAdmin> implements IAdminRepository
       }
     }
 
-      async verifyOTP(email:string, otp:string) {
+      async verifyOTP(email:string, otp:string):Promise<boolean> {
         const otpEntry = await Otp.findOne({ email, otp, expiresAt: { $gt: new Date() } });
         return otpEntry !== null;
       }

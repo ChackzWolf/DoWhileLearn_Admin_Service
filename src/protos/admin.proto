@@ -8,6 +8,13 @@ service AdminService {
     rpc ResendOtpToEmail (ResendOtpEmail) returns (ResendOtpResponse);
     rpc VerifyOTPResetPassword (VerifyOTPResetPasswordRequest) returns (OTPResponse);
     rpc ResetPassword (ResetPasswordRequest) returns (ResetPasswordResponse);
+    rpc Test(emptyRequest) returns (TestResponse);
+}
+
+message emptyRequest{}
+
+message TestResponse {
+    boolean success = 1;
 }
 
 

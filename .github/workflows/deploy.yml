@@ -1,0 +1,41 @@
+name: Deploy Admin Service
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Get commit SHA
+        id: vars
+        run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: true
+          tags: jacksoncheriyan05/admin-service:${{ steps.vars.outputs.sha_short }}
+
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+      - name: Connect to Kubernetes cluster
+        run: doctl kubernetes cluster kubeconfig save dowhilelearn-cluster
+
+      - name: Update Kubernetes deployment
+        run: |
+          kubectl set image deployment/admin-service admin-service=jacksoncheriyan05/admin-service:${{ steps.vars.outputs.sha_short }} -n dowhilelearn

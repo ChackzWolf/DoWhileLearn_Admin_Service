@@ -7,6 +7,7 @@ import { StatusCode } from "../Interfaces/Enums/Enums";
 import { generateOTP } from "../Utils/GenerateOTP";
 import { SendVerificationMail } from "../Utils/SendEmail";
 import { kafkaConfig } from "../Configs/Kafka.configs/Kafka.config";
+import { IAdminRepository } from "../Interfaces/IRepositories/IRepositroy.interfaces";
 dotenv.config();
 
   // types/events.ts
@@ -26,14 +27,21 @@ dotenv.config();
   }
 
 const repository = new adminRepository()
+
   
  
 export class AdminService implements IAdminService{
+
+    private adminRepository: IAdminRepository;
+
+    constructor(adminRepository: IAdminRepository){
+        this.adminRepository = adminRepository;
+    }
     
     async adminLogin(loginData: AdminLoginDTO): Promise<AdminLoginResponseService> {
         try {
             const {email, password} = loginData;
-            const adminData = await repository.findByEmail(email);
+            const adminData = await this.adminRepository.findByEmail(email);
             if(adminData){
                 const checkPassword = await adminData.comparePassword(password);
                 if(checkPassword){
@@ -56,7 +64,7 @@ export class AdminService implements IAdminService{
         try {
             console.log(data,'data from respon')
             const {adminId,password} = data;
-            const response = await repository.passwordChange(adminId, password);
+            const response = await this.adminRepository.passwordChange(adminId, password);
             console.log(response,'repon from service')
             return response
         } catch (error) {
@@ -67,7 +75,7 @@ export class AdminService implements IAdminService{
     async sendEmailOtp (data: {email:string}){
         try {
             const email = data.email; 
-            const emailExists = await repository.findByEmail(email);
+            const emailExists = await this.adminRepository.findByEmail(email);
             if(!emailExists){
                 console.log("email not found triggered")
                 return {success: false, message: "Email not found", status:StatusCode.NotFound };
@@ -76,7 +84,7 @@ export class AdminService implements IAdminService{
             console.log(`OTP : [ ${otp} ]`);
             await SendVerificationMail(email,otp)
             console.log('1')
-            const otpId = await repository.storeOTP(email,otp);
+            const otpId = await this.adminRepository.storeOTP(email,otp);
             console.log('2')
             return {message: 'An OTP has send to your email address.', success:true, status: StatusCode.Found,email, otpId, adminId:emailExists._id};
         } catch (error) {
@@ -95,7 +103,7 @@ export class AdminService implements IAdminService{
             await SendVerificationMail(email,otp) 
 
 
-            const updateStoredOTP = await repository.updateStoredOTP(otpId,otp);
+            const updateStoredOTP = await this.adminRepository.updateStoredOTP(otpId,otp);
             if(!updateStoredOTP){
                 return {success:false, status: StatusCode.NotFound, message:"Time expired. try again later."}
             }
@@ -110,8 +118,8 @@ export class AdminService implements IAdminService{
     async resetPasswordVerifyOTP(data: {email:string,enteredOTP:string}){
         try { 
             const {email,enteredOTP} = data;
-            const response = await repository.verifyOTP(email,enteredOTP)
-            const admin = await repository.findByEmail(email);
+            const response = await this.adminRepository.verifyOTP(email,enteredOTP)
+            const admin = await this.adminRepository.findByEmail(email);
             if(response && admin){
                 return {success:true, message: 'Email has been verified successfuly.',status:StatusCode.Accepted,email,adminId:admin._id}
             }
@@ -125,7 +133,7 @@ export class AdminService implements IAdminService{
         try {
             console.log(paymentEvent.adminShare, "this is admin share amount")
              const moneyToAdd = parseInt(paymentEvent.adminShare);
-             const udpated = await repository.updateWallet(moneyToAdd);
+             const udpated = await this.adminRepository.updateWallet(moneyToAdd);
              if(!udpated?.success){
                 throw new Error(" not updated. error occuururur.")
              }
@@ -147,7 +155,7 @@ export class AdminService implements IAdminService{
 
     async handleOrderTransactionFail(failedPaymentEvent:OrderEventData){
         const moneyToSubtract = parseInt(failedPaymentEvent.adminShare) * -1;
-        const updated = await repository.updateWallet(moneyToSubtract);
+        const updated = await this.adminRepository.updateWallet(moneyToSubtract);
         if(!updated?.success){
             throw Error("role back failed. update is not success.")
         }

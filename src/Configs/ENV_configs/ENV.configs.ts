@@ -26,4 +26,4 @@ export const configs = {
 
     // LOGGER CONFIGS
     LOG_RETENTION_DAYS : process.env.LOG_RETENTION_DAYS || '7d'
-}
+}   

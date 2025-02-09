@@ -1,0 +1,95 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: admin-service-config
+data:
+  PORT: "3006"
+  ADMIN_GRPC_PORT: "5006"
+  JWT_EXPIRATION_TIME: "1m"
+  REFRESH_TOKEN_EXPIRATION_TIME: "10d"
+  LOG_RETENTION_DAYS: "7d"
+  MONGODB_NAME: "AdminDB"
+  EMAIL: "dowhilelearn05@gmail.com"
+  MONGODB_URL_ADMIN: "mongodb+srv://jacksoncheriyan05:MongoDBPassword@cluster0.oh2lv.mongodb.net/AdminDB"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: admin-service-secrets
+type: Opaque
+data:
+  JWT_SECRET: "Njc3ZjM4ODJhN2E3ZWZjM2Q3MGI4OTZiOThjMTE1NDc0ZmE3YjBlNDRmMDdiMTgyODdkNWI2Yjg0ZjI3NjEwNGExNDE4MGFmMTUyOTNjZWNlMzQxN2M5YmU1NTkzMDFkNGZkYmU5MjU2YzJiMzdlNDkzMjRkMGZkNzBiYmIyNTk="
+  REFRESH_TOKEN_SECRET: "Njc3ZjM4ODJhN2E3ZWZjM2Q3MGI4OTZiOThjMTE1NDc0ZmE3YjBlNDRmMDdiMTgyODdkNWI2Yjg0ZmExNDE4MGFmMTUyOTNjZWNlMzQxN2M5YmU1NTkzMDFkNGZkYmU5MjU2YzJiSkZJRFNKVklEWUdJRFdPMzgzOTU3MzY0ODM5Mg=="
+  EMAIL_PASSWORD: "bWN1bSBtcG5sIGhrd2IgbXVkcQ=="
+  MONGODB_URL_ADMIN: "bW9uZ29kYitzcnY6Ly9qYWNrc29uY2hlcml5YW4wNTpNb25nb0RCUGFzc3dvcmRAY2x1c3RlcjAub2gybHYubW9uZ29kYi5uZXQvQWRtaW5EQg=="
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: admin-service
+  labels:
+    app: admin-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: admin-service
+  template:
+    metadata:
+      labels:
+        app: admin-service
+    spec:
+      hostAliases:
+      - ip: "172.17.0.1" 
+        hostnames:
+        - "education-kafka"
+      containers:
+      - name: admin-service
+        image: admin-service:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 5006
+          name: grpc
+        - containerPort: 3006
+          name: kafka
+        envFrom:
+        - configMapRef:
+            name: admin-service-config
+        - secretRef:
+            name: admin-service-secrets
+        resources:
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+        readinessProbe:
+          tcpSocket:
+            port: grpc
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          tcpSocket:
+            port: grpc
+          initialDelaySeconds: 15
+          periodSeconds: 20
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: admin-service
+spec:
+  type: ClusterIP
+  ports:
+  - port: 5006
+    targetPort: grpc
+    protocol: TCP
+    name: grpc
+  - port: 3006
+    targetPort: kafka
+    protocol: TCP
+    name: kafka
+  selector:
+    app: admin-service

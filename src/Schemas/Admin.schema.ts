@@ -11,6 +11,12 @@ export interface ITempAdmin extends Document {
     _id: Types.ObjectId; // This is the correct type for MongoDB _id
 }
 
+export interface OTPInterface extends Document {
+    email: string;
+    otp: string;
+    expiresAt: Date;
+  }
+
 const AdminSchema: Schema <IAdmin> = new Schema({
     email: {
         type: String,
@@ -46,7 +52,7 @@ const TempAdminSchema: Schema <ITempAdmin> = new Schema({
     timestamps: true,
 })
 
-const otpSchema = new Schema({
+const otpSchema:Schema<OTPInterface> = new Schema({
     email: { type: String, required: true, unique: true },
     otp: { type: String, required: true },
     expiresAt: { type: Date, required: true }
@@ -91,7 +97,7 @@ AdminSchema.methods.comparePassword = async function (enteredPassword: string) {
 };
 
 
-export const Otp = mongoose.model("setOTP",otpSchema)
+export const Otp = mongoose.model<OTPInterface>("setOTP",otpSchema)
 export const TempAdmin = mongoose.model<ITempAdmin>("TempAdminData",TempAdminSchema)
 const AdminModel = mongoose.model<IAdmin>("Admin", AdminSchema);
 

@@ -2,6 +2,7 @@ import { AdminService } from "../Services/Admin.services";
 import * as grpc from '@grpc/grpc-js';
 import { kafkaConfig } from "../Configs/Kafka.configs/Kafka.config";
 import { KafkaMessage } from 'kafkajs';
+
 export interface OrderEventData {
     userId: string;
     tutorId: string;
@@ -15,15 +16,18 @@ export interface OrderEventData {
     paymentStatus:boolean;
     timestamp: Date;
     status: string;
-  }
-
-
- 
-
-
-const adminService = new AdminService()
+}
 
 export class AdminController {
+    
+    private adminService:AdminService;
+
+    constructor(adminService:AdminService){
+        this.adminService = adminService;
+    }
+
+
+    
     async start(): Promise<void> {
         const topics =          [
             'admin.update',
@@ -60,7 +64,7 @@ export class AdminController {
             const paymentEvent: OrderEventData = JSON.parse(message.value?.toString() || '');
             console.log('START', paymentEvent, 'MESAGe haaha')
 
-            await adminService.handleOrderSuccess(paymentEvent);
+            await this.adminService.handleOrderSuccess(paymentEvent);
           } catch (error) {
             console.error('Error processing message:', error);
           }
@@ -70,7 +74,7 @@ export class AdminController {
             try {
               const paymentEvent = JSON.parse(message.value?.toString() || '');
               console.log('START Role back', paymentEvent, 'MESAGe haaha');
-              await adminService.handleOrderTransactionFail(paymentEvent.data) 
+              await this.adminService.handleOrderTransactionFail(paymentEvent.data) 
             } catch (error) {
               console.error('Error processing message:', error)
             } 
@@ -81,7 +85,7 @@ export class AdminController {
             console.log('trigerererere')
             const data = call.request;
             
-            const response = await adminService.adminLogin(data);
+            const response = await this.adminService.adminLogin(data);
             console.log(response, 'response')
             callback(null, response);
         }catch(err){
@@ -93,7 +97,7 @@ export class AdminController {
         try{
             console.log('trig respassword controller')
             const data = call.request;
-            const response = await adminService.resetPassword(data)
+            const response = await this.adminService.resetPassword(data)
             console.log(response)
             callback(null, response)
         }catch(error){
@@ -105,7 +109,7 @@ export class AdminController {
         try {
             console.log('trig to otp email send controller ', call.request)
             const data = call.request;
-            const response = await adminService.sendEmailOtp(data);
+            const response = await this.adminService.sendEmailOtp(data);
             console.log('reseponse from controller', response);
             callback(null, response);
         } catch (error) {
@@ -116,7 +120,7 @@ export class AdminController {
         try {
             console.log('trig to resend otp email send controller ', call.request);
             const data = call.request;
-            const response = await adminService.resendEmailOtp(data);
+            const response = await this.adminService.resendEmailOtp(data);
             console.log('reseponse from controller', response);
             callback(null, response);
         } catch (error) {
@@ -128,11 +132,15 @@ export class AdminController {
         try {
             console.log('trig', call.request);
             const data = call.request;
-            const response = await adminService.resetPasswordVerifyOTP(data);
+            const response = await this.adminService.resetPasswordVerifyOTP(data);
             console.log(response,'response from controller')
             callback(null,response);
         } catch (error) {
             callback(error as grpc.ServiceError);
         }
+    }
+
+    test(_call: grpc.ServerUnaryCall<null,{success:boolean}>, callback:grpc.sendUnaryData<{success:boolean}>): void {
+        callback(null,{success:true});
     }
 }

@@ -9,6 +9,8 @@ import morgan from 'morgan';
 import winston from 'winston';
 import DailyRotateFile from 'winston-daily-rotate-file';
 import { configs } from "./Configs/ENV_configs/ENV.configs";
+import { AdminService } from "./Services/Admin.services";
+import AdminRepository from "./Repository/AdminRepository/Admin.repository";
 const app = express()
 
 connectDB()
@@ -45,17 +47,17 @@ const packageDefinition = protoLoader.loadSync(
 )
 
 const adminProto = grpc.loadPackageDefinition(packageDefinition) as any;
-
+ 
 const server = new grpc.Server()
 
 export const grpcServer = () => {  
-    server.bindAsync(
+    server.bindAsync( 
         `0.0.0.0:${configs.ADMIN_GRPC_PORT}`,
         grpc.ServerCredentials.createInsecure(),
         (err,port)=>{
             if(err){
                 console.log(err, "Error happened grpc admin service.");
-                return;
+                return; 
             }else{
                 console.log("ADMIN_SERVICE running on port", port);
             }
@@ -64,18 +66,22 @@ export const grpcServer = () => {
 }
 
 
-export const controller = new AdminController() 
+const adminRepository = new AdminRepository()
+const adminService = new AdminService(adminRepository)
+const adminController = new AdminController(adminService) 
+
 
 server.addService(adminProto.AdminService.service, {
-    Login: controller.Login,
-    SendOtpToEmail: controller.sendOtpToEmail ,
-    ResendOtpToEmail: controller.resendOtpToEmail,
-    VerifyOTPResetPassword : controller.VerifyEnteredOTP,
-    ResetPassword: controller.resetPassword,
+    Login: adminController.Login.bind(adminController),
+    SendOtpToEmail: adminController.sendOtpToEmail.bind(adminController),
+    ResendOtpToEmail: adminController.resendOtpToEmail.bind(adminController),
+    VerifyOTPResetPassword : adminController.VerifyEnteredOTP.bind(adminController),
+    ResetPassword: adminController.resetPassword.bind(adminController),
+    Test: adminController.test.bind(adminController)
 })
 
 // Start Kafka consumer
-controller.start()
+adminController.start()
   .catch(error => console.error('Failed to start kafka course service:', error));
 
 const PORT = configs.PORT; 

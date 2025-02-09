@@ -10,7 +10,7 @@ export class KafkaConfig {
   private constructor() { 
     this.kafka = new Kafka({
       clientId: 'nodejs-kafka',
-      brokers: ['localhost:9092'],
+      brokers: ['education-kafka.default.svc.cluster.local:29092'],
       retry: {
         maxRetryTime: 60000, // 60 seconds
 
