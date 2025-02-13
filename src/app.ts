@@ -86,6 +86,7 @@ adminController.start()
 
 const PORT = configs.PORT; 
 app.listen(PORT, () => {
-  console.log(`Course service running on port ${PORT}`);
+  console.log(`Admin service running on port ${PORT}`);
+  console.log(configs.JWT_SECRET, 'jwt secret');
 });
  
