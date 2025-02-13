@@ -1,7 +1,7 @@
-import dotenv from "dotenv";
-import jwt ,{ Secret }from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 import { IAdmin } from "../Interfaces/Models/IAdmin";
 import { configs } from "../Configs/ENV_configs/ENV.configs";
+import dotenv from "dotenv";
 
 dotenv.config()
 
@@ -13,28 +13,29 @@ if(!JWT_SECRET || !REFRESH_TOKEN_SECRET){
 }
 
 const createToken = (admin:IAdmin) : {accessToken:string,refreshToken:string} =>{
-
+    // @ts-ignore
     const accessToken = jwt.sign(
         {
             id : admin._id,
             role:'ADMIN',
             email: admin.email,  
-        },JWT_SECRET as Secret,
+        },
+        JWT_SECRET,
         { expiresIn: configs.JWT_EXPIRATION_TIME }
     )
     
+    // @ts-ignore
     const refreshToken = jwt.sign(
         {
             id: admin._id, 
             role:'ADMIN',
             email: admin.email,
-        },
-        REFRESH_TOKEN_SECRET as Secret,
-        {expiresIn: configs.REFRESH_TOKEN_EXPIRATION_TIME}
+        }, 
+        REFRESH_TOKEN_SECRET,
+        { expiresIn: configs.REFRESH_TOKEN_EXPIRATION_TIME }
     )
 
     return {accessToken, refreshToken}
 }
 
 export default createToken
- 

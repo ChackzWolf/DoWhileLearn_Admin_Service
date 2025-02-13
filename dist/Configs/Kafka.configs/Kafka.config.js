@@ -9,7 +9,7 @@ class KafkaConfig {
         this.consumer = null;
         this.kafka = new kafkajs_1.Kafka({
             clientId: 'nodejs-kafka',
-            brokers: ['education-kafka.default.svc.cluster.local:29092'],
+            brokers: ['education-kafka.dowhilelearn.svc.cluster.local:29092'],
             retry: {
                 maxRetryTime: 60000, // 60 seconds
             },

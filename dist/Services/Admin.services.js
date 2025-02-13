@@ -6,10 +6,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AdminService = void 0;
 const Admin_repository_1 = __importDefault(require("../Repository/AdminRepository/Admin.repository"));
 const dotenv_1 = __importDefault(require("dotenv"));
-const Activation_token_1 = __importDefault(require("../Utils/Activation.token"));
+const activation_token_1 = __importDefault(require("../Utils/activation.token"));
 const Enums_1 = require("../Interfaces/Enums/Enums");
-const GenerateOTP_1 = require("../Utils/GenerateOTP");
-const SendEmail_1 = require("../Utils/SendEmail");
+const generateOTP_1 = require("../Utils/generateOTP");
+const sendEmail_1 = require("../Utils/sendEmail");
 const Kafka_config_1 = require("../Configs/Kafka.configs/Kafka.config");
 dotenv_1.default.config();
 const repository = new Admin_repository_1.default();
@@ -25,7 +25,7 @@ class AdminService {
                 const checkPassword = await adminData.comparePassword(password);
                 if (checkPassword) {
                     console.log(adminData, 'kkkkkkkkk');
-                    const { refreshToken, accessToken } = (0, Activation_token_1.default)(adminData);
+                    const { refreshToken, accessToken } = (0, activation_token_1.default)(adminData);
                     return { success: true, message: "Admin login successful.", adminData, refreshToken, accessToken };
                 }
                 else {
@@ -60,9 +60,9 @@ class AdminService {
                 console.log("email not found triggered");
                 return { success: false, message: "Email not found", status: Enums_1.StatusCode.NotFound };
             }
-            let otp = (0, GenerateOTP_1.generateOTP)();
+            let otp = (0, generateOTP_1.generateOTP)();
             console.log(`OTP : [ ${otp} ]`);
-            await (0, SendEmail_1.SendVerificationMail)(email, otp);
+            await (0, sendEmail_1.SendVerificationMail)(email, otp);
             console.log('1');
             const otpId = await this.adminRepository.storeOTP(email, otp);
             console.log('2');
@@ -76,9 +76,9 @@ class AdminService {
         try {
             console.log('trig resend');
             const { email, otpId } = data;
-            let otp = (0, GenerateOTP_1.generateOTP)();
+            let otp = (0, generateOTP_1.generateOTP)();
             console.log(`OTP : [ ${otp} ]`);
-            await (0, SendEmail_1.SendVerificationMail)(email, otp);
+            await (0, sendEmail_1.SendVerificationMail)(email, otp);
             const updateStoredOTP = await this.adminRepository.updateStoredOTP(otpId, otp);
             if (!updateStoredOTP) {
                 return { success: false, status: Enums_1.StatusCode.NotFound, message: "Time expired. try again later." };
