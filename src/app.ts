@@ -2,15 +2,15 @@ import dotenv from "dotenv";
 import * as grpc from "@grpc/grpc-js";
 import * as protoLoader from "@grpc/proto-loader";
 import path from "path";
-import { AdminController }  from "./Controllers/Admin.Controller";
-import { connectDB } from "./Configs/DB.configs.ts/MongoDB"
-import express from "express"
+import { AdminController }  from "./controllers/admin.controller";
+import { connectDB } from "./configs/DB.configs.ts/MongoDB";
+import express from "express";
 import morgan from 'morgan';
 import winston from 'winston';
 import DailyRotateFile from 'winston-daily-rotate-file';
-import { configs } from "./Configs/ENV_configs/ENV.configs";
-import { AdminService } from "./Services/Admin.services";
-import AdminRepository from "./Repository/AdminRepository/Admin.repository";
+import { configs } from "./configs/ENV_configs/ENV.configs";
+import { AdminService } from "./services/Admin.services";
+import AdminRepository from "./repository/AdminRepository/Admin.repository";
 const app = express()
 
 connectDB()
@@ -37,9 +37,6 @@ const logger = winston.createLogger({
       write: (message) => logger.info(message.trim())
     }
   }));
-// error log end
-
-
 
 const packageDefinition = protoLoader.loadSync(
     path.join(__dirname, "protos/admin.proto"),
@@ -80,10 +77,9 @@ server.addService(adminProto.AdminService.service, {
     Test: adminController.test.bind(adminController)
 })
 
-// Start Kafka consumer
+
 adminController.start()
   .catch(error => console.error('Failed to start kafka course service:', error));
-
 const PORT = configs.PORT; 
 app.listen(PORT, () => {
   console.log(`Admin service running on port ${PORT}`);

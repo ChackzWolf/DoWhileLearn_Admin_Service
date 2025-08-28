@@ -13,6 +13,7 @@ export interface AdminLoginResponse {
     _id: string;
 }
 export interface AdminLoginResponseService {
+    status: number;
     success: boolean;
     message: string;
     adminData?: IAdmin;

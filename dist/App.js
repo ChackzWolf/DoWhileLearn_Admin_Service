@@ -41,15 +41,15 @@ const dotenv_1 = __importDefault(require("dotenv"));
 const grpc = __importStar(require("@grpc/grpc-js"));
 const protoLoader = __importStar(require("@grpc/proto-loader"));
 const path_1 = __importDefault(require("path"));
-const Admin_Controller_1 = require("./Controllers/Admin.Controller");
-const MongoDB_1 = require("./Configs/DB.configs.ts/MongoDB");
+const admin_controller_1 = require("./controllers/admin.controller");
+const MongoDB_1 = require("./configs/DB.configs.ts/MongoDB");
 const express_1 = __importDefault(require("express"));
 const morgan_1 = __importDefault(require("morgan"));
 const winston_1 = __importDefault(require("winston"));
 const winston_daily_rotate_file_1 = __importDefault(require("winston-daily-rotate-file"));
-const ENV_configs_1 = require("./Configs/ENV_configs/ENV.configs");
-const Admin_services_1 = require("./Services/Admin.services");
-const Admin_repository_1 = __importDefault(require("./Repository/AdminRepository/Admin.repository"));
+const ENV_configs_1 = require("./configs/ENV_configs/ENV.configs");
+const Admin_services_1 = require("./services/Admin.services");
+const Admin_repository_1 = __importDefault(require("./repository/AdminRepository/Admin.repository"));
 const app = (0, express_1.default)();
 (0, MongoDB_1.connectDB)();
 dotenv_1.default.config();
@@ -71,7 +71,6 @@ app.use((0, morgan_1.default)('combined', {
         write: (message) => logger.info(message.trim())
     }
 }));
-// error log end
 const packageDefinition = protoLoader.loadSync(path_1.default.join(__dirname, "protos/admin.proto"), { keepCase: true, longs: String, enums: String, defaults: true, oneofs: true });
 const adminProto = grpc.loadPackageDefinition(packageDefinition);
 const server = new grpc.Server();
@@ -89,7 +88,7 @@ const grpcServer = () => {
 exports.grpcServer = grpcServer;
 const adminRepository = new Admin_repository_1.default();
 const adminService = new Admin_services_1.AdminService(adminRepository);
-const adminController = new Admin_Controller_1.AdminController(adminService);
+const adminController = new admin_controller_1.AdminController(adminService);
 server.addService(adminProto.AdminService.service, {
     Login: adminController.Login.bind(adminController),
     SendOtpToEmail: adminController.sendOtpToEmail.bind(adminController),
@@ -98,7 +97,6 @@ server.addService(adminProto.AdminService.service, {
     ResetPassword: adminController.resetPassword.bind(adminController),
     Test: adminController.test.bind(adminController)
 });
-// Start Kafka consumer
 adminController.start()
     .catch(error => console.error('Failed to start kafka course service:', error));
 const PORT = ENV_configs_1.configs.PORT;

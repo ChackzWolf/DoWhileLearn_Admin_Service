@@ -1,9 +1,9 @@
 // adminRepository.ts
-import { IAdminRepository } from "../../Interfaces/IRepositories/IRepositroy.interfaces";
-import AdminModel, {Otp, OTPInterface} from "../../Schemas/Admin.schema";
-import { IAdmin } from "../../Interfaces/Models/IAdmin";
+import { IAdminRepository } from "../../interfaces/IRepositories/IRepositroy.interfaces";
+import AdminModel, {Otp, OTPInterface} from "../../schemas/Admin.schema";
+import { IAdmin } from "../../interfaces/Models/IAdmin";
 import dotenv from "dotenv";
-import { StatusCode } from "../../Interfaces/Enums/Enums";
+import { StatusCode } from "../../interfaces/Enums/Enums";
 import { BaseRepository } from "../BaseRepository/Base.repository";
 import { promises } from "node:readline";
 import { ObjectId } from "mongodb";
@@ -11,13 +11,13 @@ import { ObjectId } from "mongodb";
 
 class adminRepository extends BaseRepository<IAdmin> implements IAdminRepository {
     constructor() {
-      super(AdminModel); // Pass the AdminModel to BaseRepository
+      super(AdminModel);
     }
 
 
     async findByEmail(email: string): Promise<IAdmin | null> {
         try {
-            const admin = await this.findOne({ email }) //.exec() method ensures that the query returns a promise.
+            const admin = await this.findOne({ email })
             console.log(admin, 'email in adminRepository');
             return admin;
         } catch (err) {

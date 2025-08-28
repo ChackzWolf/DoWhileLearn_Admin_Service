@@ -4,15 +4,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AdminService = void 0;
-const Admin_repository_1 = __importDefault(require("../Repository/AdminRepository/Admin.repository"));
 const dotenv_1 = __importDefault(require("dotenv"));
-const activation_token_1 = __importDefault(require("../Utils/activation.token"));
-const Enums_1 = require("../Interfaces/Enums/Enums");
-const generateOTP_1 = require("../Utils/generateOTP");
-const sendEmail_1 = require("../Utils/sendEmail");
-const Kafka_config_1 = require("../Configs/Kafka.configs/Kafka.config");
+const activation_token_1 = __importDefault(require("../utils/activation.token"));
+const Enums_1 = require("../interfaces/Enums/Enums");
+const generateOTP_1 = require("../utils/generateOTP");
+const sendEmail_1 = require("../utils/sendEmail");
+const Kafka_config_1 = require("../configs/Kafka.configs/Kafka.config");
 dotenv_1.default.config();
-const repository = new Admin_repository_1.default();
 class AdminService {
     constructor(adminRepository) {
         this.adminRepository = adminRepository;
@@ -26,18 +24,18 @@ class AdminService {
                 if (checkPassword) {
                     console.log(adminData, 'kkkkkkkkk');
                     const { refreshToken, accessToken } = (0, activation_token_1.default)(adminData);
-                    return { success: true, message: "Admin login successful.", adminData, refreshToken, accessToken };
+                    return { success: true, message: "Admin login successful.", adminData, refreshToken, accessToken, status: Enums_1.StatusCode.Accepted };
                 }
                 else {
-                    return { success: false, message: "Invalid password." };
+                    return { success: false, message: "Invalid password.", status: Enums_1.StatusCode.NotAcceptable };
                 }
             }
             else {
-                return { success: false, message: "Invalid email." };
+                return { success: false, message: "Invalid email.", status: Enums_1.StatusCode.NotAcceptable };
             }
         }
         catch (error) {
-            return { success: false, message: "An error occured while loggin in." };
+            return { success: false, message: "An error occured while loggin in.", status: Enums_1.StatusCode.InternalServerError };
         }
     }
     async resetPassword(data) {
@@ -45,7 +43,6 @@ class AdminService {
             console.log(data, 'data from respon');
             const { adminId, password } = data;
             const response = await this.adminRepository.passwordChange(adminId, password);
-            console.log(response, 'repon from service');
             return response;
         }
         catch (error) {

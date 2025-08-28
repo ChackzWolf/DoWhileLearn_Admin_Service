@@ -1,5 +1,5 @@
 import { ObjectId } from "mongodb";
-import { OTPInterface } from "../../Schemas/Admin.schema";
+import { OTPInterface } from "../../schemas/Admin.schema";
 import { IAdmin } from "../Models/IAdmin";
 export interface IAdminRepository {
     findByEmail(email: string): Promise<IAdmin | null>;

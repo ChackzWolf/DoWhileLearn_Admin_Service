@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
-import { IAdmin } from "../Interfaces/Models/IAdmin";
-import { configs } from "../Configs/ENV_configs/ENV.configs";
+import { IAdmin } from "../interfaces/Models/IAdmin";
+import { configs } from "../configs/ENV_configs/ENV.configs";
 import dotenv from "dotenv";
 
 dotenv.config()

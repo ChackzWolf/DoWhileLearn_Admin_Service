@@ -1,10 +1,7 @@
+import { KafkaMessage } from "kafkajs";
 import * as grpc from '@grpc/grpc-js';
-import { KafkaMessage } from 'kafkajs';
-import { IAdminService } from "../interfaces/IServices/IService.interfaces";
-import { LoginRequest, LoginResponse, OTPResponse, ResendOtpEmail, ResendOtpResponse, ResetPasswordRequest, ResetPasswordResponse, SendOtpResponse, TestResponse, VerifyOTPResetPasswordRequest } from '../contracts/admin.types';
-export declare class AdminController {
-    private adminService;
-    constructor(adminService: IAdminService);
+import { LoginRequest, LoginResponse, OTPResponse, ResendOtpEmail, ResendOtpResponse, ResetPasswordRequest, ResetPasswordResponse, SendOtpResponse, TestResponse, VerifyOTPResetPasswordRequest } from '../../contracts/admin.types';
+export interface IAdminController {
     start(): Promise<void>;
     routeMessage(topics: string[], message: KafkaMessage, topic: string): Promise<void>;
     handleMessage(message: KafkaMessage): Promise<void>;

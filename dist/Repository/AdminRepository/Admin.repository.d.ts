@@ -1,6 +1,6 @@
-import { IAdminRepository } from "../../Interfaces/IRepositories/IRepositroy.interfaces";
-import { OTPInterface } from "../../Schemas/Admin.schema";
-import { IAdmin } from "../../Interfaces/Models/IAdmin";
+import { IAdminRepository } from "../../interfaces/IRepositories/IRepositroy.interfaces";
+import { OTPInterface } from "../../schemas/Admin.schema";
+import { IAdmin } from "../../interfaces/Models/IAdmin";
 import { BaseRepository } from "../BaseRepository/Base.repository";
 import { ObjectId } from "mongodb";
 declare class adminRepository extends BaseRepository<IAdmin> implements IAdminRepository {

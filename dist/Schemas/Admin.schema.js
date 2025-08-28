@@ -40,7 +40,7 @@ exports.TempAdmin = exports.Otp = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const ENV_configs_1 = require("../Configs/ENV_configs/ENV.configs");
+const ENV_configs_1 = require("../configs/ENV_configs/ENV.configs");
 const AdminSchema = new mongoose_1.Schema({
     email: {
         type: String,

@@ -33,16 +33,16 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-const Admin_schema_1 = __importStar(require("../../Schemas/Admin.schema"));
-const Enums_1 = require("../../Interfaces/Enums/Enums");
+const Admin_schema_1 = __importStar(require("../../schemas/Admin.schema"));
+const Enums_1 = require("../../interfaces/Enums/Enums");
 const Base_repository_1 = require("../BaseRepository/Base.repository");
 class adminRepository extends Base_repository_1.BaseRepository {
     constructor() {
-        super(Admin_schema_1.default); // Pass the AdminModel to BaseRepository
+        super(Admin_schema_1.default);
     }
     async findByEmail(email) {
         try {
-            const admin = await this.findOne({ email }); //.exec() method ensures that the query returns a promise.
+            const admin = await this.findOne({ email });
             console.log(admin, 'email in adminRepository');
             return admin;
         }

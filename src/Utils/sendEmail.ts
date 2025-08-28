@@ -1,5 +1,5 @@
 import nodemailer from "nodemailer"
-import { configs } from "../Configs/ENV_configs/ENV.configs";
+import { configs } from "../configs/ENV_configs/ENV.configs";
 
 
 export const SendVerificationMail = async (email: string, otp: string): Promise<void> => {

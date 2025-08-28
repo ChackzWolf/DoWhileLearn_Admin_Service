@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SendVerificationMail = void 0;
 const nodemailer_1 = __importDefault(require("nodemailer"));
-const ENV_configs_1 = require("../Configs/ENV_configs/ENV.configs");
+const ENV_configs_1 = require("../configs/ENV_configs/ENV.configs");
 const SendVerificationMail = async (email, otp) => {
     try {
         const transporter = nodemailer_1.default.createTransport({

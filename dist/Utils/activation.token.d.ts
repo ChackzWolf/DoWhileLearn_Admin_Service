@@ -1,4 +1,4 @@
-import { IAdmin } from "../Interfaces/Models/IAdmin";
+import { IAdmin } from "../interfaces/Models/IAdmin";
 declare const createToken: (admin: IAdmin) => {
     accessToken: string;
     refreshToken: string;

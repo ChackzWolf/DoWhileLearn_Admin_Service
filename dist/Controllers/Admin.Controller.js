@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AdminController = void 0;
-const Kafka_config_1 = require("../Configs/Kafka.configs/Kafka.config");
+const Kafka_config_1 = require("../configs/Kafka.configs/Kafka.config");
 class AdminController {
     constructor(adminService) {
         this.adminService = adminService;
@@ -27,9 +27,9 @@ class AdminController {
             }
         }
         catch (error) {
+            console.error('Error processing message:', error);
         }
     }
-    // checking order  success or fail
     async handleMessage(message) {
         try {
             const paymentEvent = JSON.parse(message.value?.toString() || '');

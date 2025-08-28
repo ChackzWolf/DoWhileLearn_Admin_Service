@@ -7,9 +7,10 @@ class KafkaConfig {
     constructor() {
         this.producer = null;
         this.consumer = null;
+        const brokerAddress = process.env.KAFKA_BROKER || 'education-platform-kafka.dowhilelearn.svc.cluster.local:29092';
         this.kafka = new kafkajs_1.Kafka({
             clientId: 'nodejs-kafka',
-            brokers: ['education-kafka.dowhilelearn.svc.cluster.local:29092'],
+            brokers: [brokerAddress],
             retry: {
                 maxRetryTime: 60000, // 60 seconds
             },

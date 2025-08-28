@@ -16,6 +16,7 @@ export interface AdminLoginResponse {
 }
 /// response for IService
 export interface AdminLoginResponseService {
+    status:number
     success:boolean;
     message:string;
     adminData?:IAdmin;
