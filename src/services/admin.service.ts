@@ -6,9 +6,19 @@ import { SendVerificationMail } from "../utils/sendEmail";
 import { kafkaConfig } from "../configs/Kafka.configs/Kafka.config";
 import { IAdminRepository } from "../repository/interfaces/IRepositroy.interfaces";
 import { OrderEventData } from "../contracts/events";
-import { AdminLoginDTO, AdminLoginResponseService, EmailData, ResendOtpData, ResetPasswordData, resetPasswordOtpData, ResetPasswordVerifyOTPData, SendEmailOtpResponse } from "./types/admin-service.types";
 import { ResendOtpResponse, ResetPasswordResponse } from "../contracts/admin.types";
 import { IAdminAuthService } from "./types/admin-auth.service.types";
+import {
+    EmailData,
+    ResendOtpData,
+    AdminLoginDTO,
+    ResetPasswordData,
+    SendEmailOtpResponse,
+    resetPasswordOtpData,
+    AdminLoginResponseService,
+    ResetPasswordVerifyOTPData,
+} from "./types/admin-service.types";
+
 
 
 dotenv.config();
@@ -48,7 +58,7 @@ export class AdminService implements IAdminService {
         }
     }
 
-    async resetPassword(data:ResetPasswordData): Promise<ResetPasswordResponse> {
+    async resetPassword(data: ResetPasswordData): Promise<ResetPasswordResponse> {
         try {
             console.log(data, 'data from respon')
             const { adminId, password } = data;
