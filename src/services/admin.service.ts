@@ -1,14 +1,14 @@
 import dotenv from "dotenv"
-import createToken from "../utils/activation.token";
-import { IAdminService } from "../interfaces/IServices/IService.interfaces";
-import { AdminLoginDTO, AdminLoginResponseService } from "../interfaces/DTOs/Admin.dtos";
-import { StatusCode } from "../interfaces/Enums/Enums";
+import { IAdminService } from "./Interfaces/IService.interfaces";
+import { StatusCode } from "../common/enums/enums";
 import { generateOTP } from "../utils/generateOTP";
 import { SendVerificationMail } from "../utils/sendEmail";
 import { kafkaConfig } from "../configs/Kafka.configs/Kafka.config";
-import { IAdminRepository } from "../interfaces/IRepositories/IRepositroy.interfaces";
-import { Types } from "mongoose";
-import { OrderEventData } from "../interfaces/events";
+import { IAdminRepository } from "../repository/interfaces/IRepositroy.interfaces";
+import { OrderEventData } from "../contracts/events";
+import { AdminLoginDTO, AdminLoginResponseService, EmailData, ResendOtpData, ResetPasswordData, resetPasswordOtpData, ResetPasswordVerifyOTPData, SendEmailOtpResponse } from "./types/admin-service.types";
+import { ResendOtpResponse, ResetPasswordResponse } from "../contracts/admin.types";
+import { IAdminAuthService } from "./types/admin-auth.service.types";
 
 
 dotenv.config();
@@ -19,9 +19,11 @@ dotenv.config();
 export class AdminService implements IAdminService {
 
     private adminRepository: IAdminRepository;
+    private adminAuth: IAdminAuthService;
 
-    constructor(adminRepository: IAdminRepository) {
+    constructor(adminRepository: IAdminRepository, adminAuth: IAdminAuthService) {
         this.adminRepository = adminRepository;
+        this.adminAuth = adminAuth;
     }
 
     async adminLogin(loginData: AdminLoginDTO): Promise<AdminLoginResponseService> {
@@ -32,10 +34,10 @@ export class AdminService implements IAdminService {
                 const checkPassword = await adminData.comparePassword(password);
                 if (checkPassword) {
                     console.log(adminData, 'kkkkkkkkk')
-                    const { refreshToken, accessToken } = createToken(adminData)
+                    const { refreshToken, accessToken } = this.adminAuth.createTokens(adminData)
                     return { success: true, message: "Admin login successful.", adminData, refreshToken, accessToken, status: StatusCode.Accepted }
                 } else {
-                    return { success: false, message: "Invalid password.", status: StatusCode.NotAcceptable}
+                    return { success: false, message: "Invalid password.", status: StatusCode.NotAcceptable }
                 }
             } else {
                 return { success: false, message: "Invalid email.", status: StatusCode.NotAcceptable }
@@ -46,7 +48,7 @@ export class AdminService implements IAdminService {
         }
     }
 
-    async resetPassword(data: { adminId: string, password: string }): Promise<{ message: string, success: boolean, status: number }> {
+    async resetPassword(data:ResetPasswordData): Promise<ResetPasswordResponse> {
         try {
             console.log(data, 'data from respon')
             const { adminId, password } = data;
@@ -57,7 +59,7 @@ export class AdminService implements IAdminService {
         }
     }
 
-    async sendEmailOtp(data: { email: string }): Promise<{ success: boolean, message: string, status: number, email?: string, otpId?: Types.ObjectId, adminId?: Types.ObjectId }> {
+    async sendEmailOtp(data: EmailData): Promise<SendEmailOtpResponse> {
         try {
             const email = data.email;
             const emailExists = await this.adminRepository.findByEmail(email);
@@ -77,7 +79,7 @@ export class AdminService implements IAdminService {
         }
     }
 
-    async resendEmailOtp(data: { email: string, otpId: string }): Promise<{ success: boolean, status: number, message: string }> {
+    async resendEmailOtp(data: ResendOtpData): Promise<ResendOtpResponse> {
         try {
             console.log('trig resend')
             const { email, otpId } = data;
@@ -100,7 +102,7 @@ export class AdminService implements IAdminService {
         }
     }
 
-    async resetPasswordVerifyOTP(data: { email: string, enteredOTP: string }): Promise<{ success: boolean, message: string, status: number, email: string, adminId?: Types.ObjectId }> {
+    async resetPasswordVerifyOTP(data: resetPasswordOtpData): Promise<ResetPasswordVerifyOTPData> {
         try {
             const { email, enteredOTP } = data;
             const response = await this.adminRepository.verifyOTP(email, enteredOTP)

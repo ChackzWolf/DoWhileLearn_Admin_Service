@@ -1,5 +1,5 @@
 import { Types } from "mongoose";
-import { IAdmin } from "../interfaces/Models/IAdmin";
+import { IAdmin } from "../entities/admin.entity";
 
 export interface EmptyRequest {}
 

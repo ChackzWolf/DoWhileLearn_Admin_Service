@@ -1,88 +1,24 @@
 import dotenv from "dotenv";
-import * as grpc from "@grpc/grpc-js";
-import * as protoLoader from "@grpc/proto-loader";
-import path from "path";
-import { AdminController }  from "./controllers/admin.controller";
-import { connectDB } from "./configs/DB.configs.ts/MongoDB";
+import { connectDB } from "./configs/DB.configs/MongoDB";
 import express from "express";
-import morgan from 'morgan';
-import winston from 'winston';
-import DailyRotateFile from 'winston-daily-rotate-file';
+import morgan from "morgan";
 import { configs } from "./configs/ENV_configs/ENV.configs";
-import { AdminService } from "./services/Admin.services";
-import AdminRepository from "./repository/AdminRepository/Admin.repository";
-const app = express()
+import { logger } from "./configs/logger.config";
 
-connectDB()
-dotenv.config()
+dotenv.config();
 
-// error log
-const logger = winston.createLogger({
-    level: 'info',
-    format: winston.format.combine( 
-      winston.format.timestamp(),
-      winston.format.json()
-    ),
-    transports: [
-      new winston.transports.Console(), // Log to the console
-      new DailyRotateFile({
-        filename: 'logs/application-%DATE%.log',
-        datePattern: 'YYYY-MM-DD',
-        maxFiles: configs.LOG_RETENTION_DAYS
-      })
-    ],
-  });
-  app.use(morgan('combined', {
-    stream: {
-      write: (message) => logger.info(message.trim())
-    }
-  }));
+export const createApp = () => {
+  const app = express();
 
-const packageDefinition = protoLoader.loadSync(
-    path.join(__dirname, "protos/admin.proto"),
-    {keepCase:true , longs: String, enums: String , defaults: true, oneofs: true}
-)
+  connectDB();
 
-const adminProto = grpc.loadPackageDefinition(packageDefinition) as any;
- 
-const server = new grpc.Server()
+  app.use(
+    morgan("combined", {
+      stream: {
+        write: (message) => logger.info(message.trim()),
+      },
+    })
+  );
 
-export const grpcServer = () => {  
-    server.bindAsync( 
-        `0.0.0.0:${configs.ADMIN_GRPC_PORT}`,
-        grpc.ServerCredentials.createInsecure(),
-        (err,port)=>{
-            if(err){
-                console.log(err, "Error happened grpc admin service.");
-                return; 
-            }else{
-                console.log("ADMIN_SERVICE running on port", port);
-            }
-        }
-    )
-}
-
-
-const adminRepository = new AdminRepository()
-const adminService = new AdminService(adminRepository)
-const adminController = new AdminController(adminService) 
-
-
-server.addService(adminProto.AdminService.service, {
-    Login: adminController.Login.bind(adminController),
-    SendOtpToEmail: adminController.sendOtpToEmail.bind(adminController),
-    ResendOtpToEmail: adminController.resendOtpToEmail.bind(adminController),
-    VerifyOTPResetPassword : adminController.VerifyEnteredOTP.bind(adminController),
-    ResetPassword: adminController.resetPassword.bind(adminController),
-    Test: adminController.test.bind(adminController)
-})
-
-
-adminController.start()
-  .catch(error => console.error('Failed to start kafka course service:', error));
-const PORT = configs.PORT; 
-app.listen(PORT, () => {
-  console.log(`Admin service running on port ${PORT}`);
-  console.log(configs.JWT_SECRET, 'jwt secret');
-});
- 
+  return app;
+};

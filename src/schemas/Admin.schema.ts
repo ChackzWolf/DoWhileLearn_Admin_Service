@@ -1,7 +1,7 @@
 import mongoose, { Document, Schema,Types } from "mongoose";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { IAdmin } from "../interfaces/Models/IAdmin";
+import { IAdmin } from "../entities/admin.entity";
 import { configs } from "../configs/ENV_configs/ENV.configs";
 
 export interface ITempAdmin extends Document {

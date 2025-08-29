@@ -1,9 +1,9 @@
 import * as grpc from '@grpc/grpc-js';
 import { kafkaConfig } from "../configs/Kafka.configs/Kafka.config";
 import { KafkaMessage } from 'kafkajs';
-import { IAdminService } from "../interfaces/IServices/IService.interfaces";
-import { OrderEventData } from "../interfaces/events";
+import { OrderEventData } from "../contracts/events";
 import { LoginRequest, LoginResponse, OTPResponse, ResendOtpEmail, ResendOtpResponse, ResetPasswordRequest, ResetPasswordResponse, SendOtpResponse, TestResponse, VerifyOTPResetPasswordRequest } from '../contracts/admin.types';
+import { IAdminService } from '../services/Interfaces/IService.interfaces';
 
 
 

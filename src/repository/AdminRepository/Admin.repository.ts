@@ -1,8 +1,8 @@
 // adminRepository.ts
-import { IAdminRepository } from "../../interfaces/IRepositories/IRepositroy.interfaces";
+import { IAdminRepository } from "../interfaces/IRepositroy.interfaces";
 import AdminModel, {Otp, OTPInterface} from "../../schemas/Admin.schema";
-import { IAdmin } from "../../interfaces/Models/IAdmin";
-import { StatusCode } from "../../interfaces/Enums/Enums";
+import { IAdmin } from "../../entities/admin.entity";
+import { StatusCode } from "../../common/enums/enums";
 import { BaseRepository } from "../BaseRepository/Base.repository";
 import { ObjectId } from "mongodb";
 

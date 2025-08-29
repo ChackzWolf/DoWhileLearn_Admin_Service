@@ -1,21 +1,22 @@
-import nodemailer from "nodemailer"
+import nodemailer, { SendMailOptions } from "nodemailer"
 import { configs } from "../configs/ENV_configs/ENV.configs";
 
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: configs.DWL_EMAIL,
+        pass: configs.DWL_PASSWORD
+    },
+});
 
 export const SendVerificationMail = async (email: string, otp: string): Promise<void> => {
     try {
 
-        const transporter = nodemailer.createTransport({
-            service: 'gmail',
-            auth: {
-                user:  configs.DWL_EMAIL,
-                pass: configs.DWL_PASSWORD
-            },
-        });
+
         console.log('mail');
 
-        const mailOptions = {
-            from: 'DoWhileLearn <dowhilelearn@gmail.com>',
+        const mailOptions: SendMailOptions  = {
+            from: `DoWhileLearn ${configs.DWL_EMAIL}`,
             to: email,
             subject: 'E-Mail Verification',
             html: `<p>Hello totor, Please enter the code:${otp}  to verify your email address.</p>`
