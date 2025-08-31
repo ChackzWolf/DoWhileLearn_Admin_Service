@@ -1,6 +1,6 @@
 import { Types } from "mongoose";
-import { AdminLoginDTO, AdminLoginResponseService } from "../DTOs/Admin.dtos";
-import { OrderEventData } from "../events";
+import { AdminLoginDTO, AdminLoginResponseService } from "../types/admin-service.types";
+import { OrderEventData } from "../../contracts/events";
 
 export interface IAdminService {
     adminLogin(loginData: AdminLoginDTO): Promise<AdminLoginResponseService>

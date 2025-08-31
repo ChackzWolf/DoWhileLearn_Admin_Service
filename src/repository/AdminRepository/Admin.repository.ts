@@ -7,7 +7,7 @@ import { BaseRepository } from "../BaseRepository/Base.repository";
 import { ObjectId } from "mongodb";
 
 
-class adminRepository extends BaseRepository<IAdmin> implements IAdminRepository {
+export class AdminRepository extends BaseRepository<IAdmin> implements IAdminRepository {
     constructor() {
       super(AdminModel);
     }
@@ -99,4 +99,4 @@ class adminRepository extends BaseRepository<IAdmin> implements IAdminRepository
         return otpEntry !== null;
       }
 }
-export default adminRepository;
+export default AdminRepository;

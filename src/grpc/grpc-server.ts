@@ -2,12 +2,10 @@ import * as grpc from "@grpc/grpc-js";
 import * as protoLoader from "@grpc/proto-loader";
 import path from "path";
 import { configs } from "../configs/ENV_configs/ENV.configs";
-import { AdminController } from "../controllers/admin.controller";
-import { AdminService } from "../services/admin.service";
-import AdminRepository from "../repository/AdminRepository/Admin.repository";
-import { AdminAuthService } from "../services/admin-auth.service";
+import { AdminController } from "../controllers/grpc-controller/admin-grpc.controller";
+import { IAdminService } from "../services/Interfaces/IService.interfaces";
 
-export const startGrpcServer = () => {
+export const startGrpcServer = (adminService: IAdminService) => {
   const packageDefinition = protoLoader.loadSync(
     path.join(__dirname, "../protos/admin.proto"),
     { keepCase: true, longs: String, enums: String, defaults: true, oneofs: true }
@@ -16,9 +14,6 @@ export const startGrpcServer = () => {
   const adminProto = grpc.loadPackageDefinition(packageDefinition) as any;
   const server = new grpc.Server();
   
-  const adminAuthService = new AdminAuthService()
-  const adminRepository = new AdminRepository();
-  const adminService = new AdminService(adminRepository,adminAuthService);
   const adminController = new AdminController(adminService);
 
   server.addService(adminProto.AdminService.service, {
@@ -40,9 +35,5 @@ export const startGrpcServer = () => {
       }
       console.log(`gRPC AdminService running on port ${port}`);
     }
-  );
-
-  adminController.start().catch((error) =>
-    console.error("Failed to start Kafka course service:", error)
   );
 };

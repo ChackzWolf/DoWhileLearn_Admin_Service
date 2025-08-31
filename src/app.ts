@@ -2,7 +2,6 @@ import dotenv from "dotenv";
 import { connectDB } from "./configs/DB.configs/MongoDB";
 import express from "express";
 import morgan from "morgan";
-import { configs } from "./configs/ENV_configs/ENV.configs";
 import { logger } from "./configs/logger.config";
 
 dotenv.config();

@@ -13,7 +13,7 @@ import {
 } from '../../contracts/admin.types';
 import { IAdminService } from '../../services/Interfaces/IService.interfaces';
 
-export class AdminGrpcController {
+export class AdminController {
   private adminService: IAdminService;
 
   constructor(adminService: IAdminService) {

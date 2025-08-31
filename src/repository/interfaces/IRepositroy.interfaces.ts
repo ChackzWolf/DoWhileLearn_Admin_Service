@@ -1,7 +1,7 @@
 // IAdminRepository.ts
 import { ObjectId } from "mongodb";
 import { OTPInterface } from "../../schemas/Admin.schema";
-import { IAdmin } from "../Models/IAdmin";
+import { IAdmin } from "../../entities/admin.entity";
 
 
 export interface IAdminRepository {
