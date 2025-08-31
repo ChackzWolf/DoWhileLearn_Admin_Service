@@ -2,13 +2,14 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AdminKafkaController = void 0;
 const Kafka_config_1 = require("../../configs/Kafka.configs/Kafka.config");
+const kafka_topics_1 = require("../../configs/Kafka.configs/kafka-topics");
 class AdminKafkaController {
     constructor(adminService) {
         this.adminService = adminService;
     }
     async start() {
-        const topics = ['admin.update', 'admin-service.rollback'];
-        await Kafka_config_1.kafkaConfig.consumeMessages('admin-service-group', topics, this.routeMessage.bind(this));
+        const topics = [kafka_topics_1.KAFKA_TOPICS.ADMIN_UPDATE, kafka_topics_1.KAFKA_TOPICS.ADMIN_ROLLBACK];
+        await Kafka_config_1.kafkaConfig.consumeMessages(kafka_topics_1.KAFKA_GROUPS.ADMIN_SERVICE, topics, this.routeMessage.bind(this));
     }
     async routeMessage(_topics, message, topic) {
         try {

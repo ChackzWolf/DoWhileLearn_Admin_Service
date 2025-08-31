@@ -1,14 +1,9 @@
 import { KafkaMessage } from "kafkajs";
 import * as grpc from '@grpc/grpc-js';
-import { LoginRequest, LoginResponse, OTPResponse, ResendOtpEmail, ResendOtpResponse, ResetPasswordRequest, ResetPasswordResponse, SendOtpResponse, TestResponse, VerifyOTPResetPasswordRequest } from '../../contracts/admin.types';
+import { LoginRequest, LoginResponse, OTPResponse, ResendOtpEmail, ResendOtpResponse, ResetPasswordRequest, ResetPasswordResponse, SendOtpResponse, TestResponse, VerifyOTPResetPasswordRequest } from '../../../contracts/admin.types';
 
 
-export interface IAdminController {
-    start(): Promise<void>
-    routeMessage(topics: string[], message: KafkaMessage, topic: string): Promise<void>
-    handleMessage(message: KafkaMessage): Promise<void>
-    handleRollback(message: KafkaMessage): Promise<void>
-
+export interface IAdminGrpcController {
     Login(call: grpc.ServerUnaryCall<LoginRequest, LoginResponse>, callback: grpc.sendUnaryData<LoginResponse>): Promise<void>
     resetPassword(call: grpc.ServerUnaryCall<ResetPasswordRequest, ResetPasswordResponse>, callback: grpc.sendUnaryData<ResetPasswordResponse>): Promise<void>
     sendOtpToEmail(call: grpc.ServerUnaryCall<VerifyOTPResetPasswordRequest, SendOtpResponse>, callback: grpc.sendUnaryData<SendOtpResponse>): Promise<void>

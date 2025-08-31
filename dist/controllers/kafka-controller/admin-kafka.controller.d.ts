@@ -1,9 +1,11 @@
+import { KafkaMessage } from 'kafkajs';
 import { IAdminService } from '../../services/Interfaces/IService.interfaces';
-export declare class AdminKafkaController {
+import { IAdminKafkaController } from './interfaces/IAdmin-kafka.controller';
+export declare class AdminKafkaController implements IAdminKafkaController {
     private adminService;
     constructor(adminService: IAdminService);
     start(): Promise<void>;
-    private routeMessage;
-    private handleMessage;
-    private handleRollback;
+    routeMessage(_topics: string[], message: KafkaMessage, topic: string): Promise<void>;
+    handleMessage(message: KafkaMessage): Promise<void>;
+    handleRollback(message: KafkaMessage): Promise<void>;
 }

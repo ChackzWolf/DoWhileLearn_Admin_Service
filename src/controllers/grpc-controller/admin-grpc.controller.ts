@@ -12,8 +12,9 @@ import {
   VerifyOTPResetPasswordRequest
 } from '../../contracts/admin.types';
 import { IAdminService } from '../../services/Interfaces/IService.interfaces';
+import { IAdminGrpcController } from './interfaces/IAdmin-grpc.controller';
 
-export class AdminController {
+export class AdminController implements IAdminGrpcController{
   private adminService: IAdminService;
 
   constructor(adminService: IAdminService) {

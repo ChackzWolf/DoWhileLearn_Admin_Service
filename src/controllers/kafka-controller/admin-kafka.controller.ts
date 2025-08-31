@@ -2,8 +2,10 @@ import { KafkaMessage } from 'kafkajs';
 import { kafkaConfig } from "../../configs/Kafka.configs/Kafka.config";
 import { OrderEventData } from "../../contracts/events";
 import { IAdminService } from '../../services/Interfaces/IService.interfaces';
+import { IAdminKafkaController } from './interfaces/IAdmin-kafka.controller';
+import { KAFKA_GROUPS, KAFKA_TOPICS } from '../../configs/Kafka.configs/kafka-topics';
 
-export class AdminKafkaController {
+export class AdminKafkaController implements IAdminKafkaController {
   private adminService: IAdminService;
 
   constructor(adminService: IAdminService) {
@@ -11,15 +13,15 @@ export class AdminKafkaController {
   }
 
   async start(): Promise<void> {
-    const topics = ['admin.update', 'admin-service.rollback'];
+    const topics = [ KAFKA_TOPICS.ADMIN_UPDATE, KAFKA_TOPICS.ADMIN_ROLLBACK];
     await kafkaConfig.consumeMessages(
-      'admin-service-group',
+      KAFKA_GROUPS.ADMIN_SERVICE,
       topics,
       this.routeMessage.bind(this)
     );
   }
 
-  private async routeMessage(_topics: string[], message: KafkaMessage, topic: string): Promise<void> {
+  async routeMessage(_topics: string[], message: KafkaMessage, topic: string): Promise<void> {
     try {
       switch (topic) {
         case 'admin.update':
@@ -36,7 +38,7 @@ export class AdminKafkaController {
     }
   }
 
-  private async handleMessage(message: KafkaMessage): Promise<void> {
+  async handleMessage(message: KafkaMessage): Promise<void> {
     try {
       const paymentEvent: OrderEventData = JSON.parse(message.value?.toString() || '{}');
       await this.adminService.handleOrderSuccess(paymentEvent);
@@ -45,7 +47,7 @@ export class AdminKafkaController {
     }
   }
 
-  private async handleRollback(message: KafkaMessage): Promise<void> {
+  async handleRollback(message: KafkaMessage): Promise<void> {
     try {
       const eventData = JSON.parse(message.value?.toString() || '{}');
       await this.adminService.handleOrderTransactionFail(eventData.data);
