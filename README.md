@@ -28,14 +28,14 @@ It handles **admin-related operations** such as authentication, user management,
 ## Project Structure
 ```
 src/
-├── app.ts # Express app initialization
-├── server.ts # HTTP server entry (Express)
+├── app.ts      # Express app initialization
+├── server.ts      # HTTP server entry (Express)
 │
-├── common/ # Shared enums, constants
+├── common/      # Shared enums, constants
 │ └── enums/
 │ └── enums.ts
 │
-├── configs/ # App, DB, Kafka, ENV configs
+├── configs/      # App, DB, Kafka, ENV configs
 │ ├── DB.configs/
 │ │ └── MongoDB.ts
 │ ├── ENV_configs/
@@ -45,11 +45,11 @@ src/
 │ │ └── kafka-topics.ts
 │ └── logger.config.ts
 │
-├── contracts/ # Shared types & event contracts
+├── contracts/      # Shared types & event contracts
 │ ├── admin.types.ts
 │ └── events.ts
 │
-├── controllers/ # Kafka consumers & gRPC handlers
+├── controllers/      # Kafka consumers & gRPC handlers
 │ ├── grpc-controller/
 │ │ ├── admin-grpc.controller.ts
 │ │ └── interfaces/
@@ -59,22 +59,22 @@ src/
 │ └── interfaces/
 │ └── IAdmin-kafka.controller.ts
 │
-├── entities/ # Domain entities
+├── entities/      # Domain entities
 │ └── admin.entity.ts
 │
-├── grpc/ # gRPC entrypoint
+├── grpc/      # gRPC entrypoint
 │ └── grpc-server.ts
 │
-├── kafka/ # Kafka entrypoint
+├── kafka/      # Kafka entrypoint
 │ └── kafka-server.ts
 │
-├── interfaces/ # Shared model interfaces
+├── interfaces/      # Shared model interfaces
 │ └── Models/
 │
-├── protos/ # gRPC proto files
+├── protos/      # gRPC proto files
 │ └── admin.proto
 │
-├── repository/ # Data access layer
+├── repository/      # Data access layer
 │ ├── AdminRepository/
 │ │ └── Admin.repository.ts
 │ ├── BaseRepository/
@@ -82,10 +82,10 @@ src/
 │ └── interfaces/
 │ └── IRepositroy.interfaces.ts
 │
-├── schemas/ # Database schemas
+├── schemas/      # Database schemas
 │ └── Admin.schema.ts
 │
-├── services/ # Business logic layer
+├── services/      # Business logic layer
 │ ├── admin-auth.service.ts
 │ ├── admin.service.ts
 │ ├── Interfaces/
@@ -94,14 +94,14 @@ src/
 │ ├── admin-auth.service.types.ts
 │ └── admin-service.types.ts
 │
-└── utils/ # Helper utilities (mail, OTP, etc.)
+└── utils/      # Helper utilities (mail, OTP, etc.)
 ├── generateOTP.ts
 └── sendEmail.ts
 
 ```
 ---
 
-## ⚙️ Installation & Setup
+## Installation & Setup
 
 ### 1. Clone the repository
 ```bash
@@ -125,8 +125,6 @@ DWL_PASSWORD=your_app_password
 KAFKA_BROKER=localhost:9092
 ```
 
-⚠️ Do not commit your `.env` file.
-
 ### 4. Run the service
 ```bash
 npm run dev
@@ -140,7 +138,7 @@ npm run start
 
 ---
 
-## 📨 Kafka Topics
+## Kafka Topics
 - **admin.update** → Handles admin updates after order success
 - **admin-service.rollback** → Handles rollback events on transaction failure
 
